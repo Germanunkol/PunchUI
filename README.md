@@ -10,6 +10,7 @@ Features:
   - simple input box
   - add actions which are assigned to keys (keys are displayed next to action name)
   - tooltip if you press shift + function key
+  - message boxes, with header, text and multiple possible answers
   
   
 main.lua example is included. Install Love2D go to the folder and run:

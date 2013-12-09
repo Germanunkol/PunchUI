@@ -3,21 +3,21 @@
 -- Takes into account colours, newlines, font type.
 -- Returns a table of line fragments.
 
-local COLORS = {
-	RED = { ID = "{r}", col = {255,0,0,255} },
-	WHITE = { ID = "{w}", col = {255,255,255,255} },
-	GREEN = { ID = "{g}", col = {0,255,0,255} },
-}
+local PATH = (...):match("(.-)[^%.]+$")
+local class = require( PATH .. "middleclass" )
+local COLORS = require(PATH .. "colors")
+local TextBlock = class("TextBlock")
 
+function TextBlock:initialize( name, x, y, width, height, text, font, renderImg )
 
-class = require("Scripts/middleclass")
-TextBlock = class("TextBlock2")
-
-function TextBlock:initialize( text, font, width )
-
+	self.name = name or ""
+	self.x = x or 0
+	self.y = y or 0
 	self.width = width or 100
 	self.font = font
+	self.maxLines = math.floor(height/self.font:getHeight())
 	self.original = text or ""
+	self.renderImg = renderImg
 	
 	self.plain = self.original:gsub("{.-}", "")
 	self.lines = self:wrap()
@@ -25,8 +25,10 @@ function TextBlock:initialize( text, font, width )
 	self.fragments = self:colorSplit()
 
 	self.height = #self.lines*self.font:getHeight()
-
-	self:render()
+	
+	if self.renderImg then
+		self:render()
+	end
 
 	return self.width, self.height
 end
@@ -113,7 +115,7 @@ function TextBlock:colorSplit()
 	-- look for all occurances of the id of all colors in the text:
 	for k,col in pairs(COLORS) do
 		for s,e in self.original:gmatch( "()" .. col.ID .. "()" ) do
-			table.insert( split, {start = s, color = col.col} )
+			table.insert( split, {start = s, color = col} )
 		end
 	end
 
@@ -170,8 +172,35 @@ function TextBlock:colorSplit()
 	return fragments
 end
 
+function TextBlock:setText( text )
+	self.original = text
+	self.plain = self.original:gsub("{.-}", "")
+	self.lines = self:wrap()
+	self.fragments = self:colorSplit()
+
+	self.height = #self.lines*self.font:getHeight()
+	
+	if self.renderImg then
+		self:render()
+	end
+
+	return self.width, self.height
+end
+
+function TextBlock:setDimensions( width, height )
+	self.maxWidth = width
+	self.maxHeight = height
+end
+
 function TextBlock:render()
-	self.canvas = love.graphics.newCanvas( self.width, self.height )
+	self.canvasWidth = self.width
+	self.canvasHeight = self.height
+	love.graphics.setColor( 255,255,255,255 )
+
+	if self.canvasWidth == math.huge then
+		self.canvasWidth = self.font:getWidth( self.lines[1] )
+	end
+	self.canvas = love.graphics.newCanvas( self.canvasWidth, self.canvasHeight )
 	love.graphics.setCanvas( self.canvas )
 	love.graphics.setFont( self.font )
 	for k, f in ipairs(self.fragments) do
@@ -181,16 +210,50 @@ function TextBlock:render()
 	love.graphics.setCanvas()
 end
 
-function TextBlock:draw( x, y )
+function TextBlock:draw()
 	love.graphics.setColor( 255, 255, 255, 255 )
-	local prevMode = love.graphics.getBlendMode()
-	love.graphics.setBlendMode("premultiplied")
+	love.graphics.push()
+	love.graphics.translate( self.x, self.y )
+	if self.canvas then
+		local prevMode = love.graphics.getBlendMode()
+		love.graphics.setBlendMode("premultiplied")
 
-	love.graphics.draw( self.canvas, x, y )
+		love.graphics.draw( self.canvas, 0, 0)
 
-	love.graphics.setBlendMode( prevMode )
+		love.graphics.setBlendMode( prevMode )
+	else
+		for k, f in ipairs(self.fragments) do
+			love.graphics.setColor( f.color )
+			love.graphics.print( f.txt, f.x, f.y )
+		end
+	end
+	love.graphics.pop()
 end
 
 function TextBlock:getHeight()
 	return self.height
 end
+
+function TextBlock:getWidth()
+	return self.width
+end
+
+function TextBlock:getCharPos( num )
+	local i = 0
+	local k = 1
+	local x, y = 0,0
+	while i < num do
+		if i + #self.fragments[k].txt >= num then
+			local part = self.fragments[k].txt:sub(1, num - i)
+			x = self.font:getWidth( part ) + self.fragments[k].x
+			y = self.fragments[k].y
+			break
+		else
+			i = i + #self.fragments[k].txt
+			k = k + 1
+		end
+	end
+	return x, y
+end
+
+return TextBlock

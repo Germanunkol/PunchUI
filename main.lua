@@ -1,41 +1,38 @@
-class = require("Scripts/middleclass")
-require("Scripts/UI/ui")	-- creates class "UI"
+ui = require("PunchUI")
 
 function love.load()
-	myUI = UI:new( "testUI" )
 
-	myUI:newPanel( "topPanel", 10, 10, 500, 20, 10 )
-	myUI:newPanel( "bottomPanel", 10, love.graphics.getHeight() - 100, 500, 90 )
+	love.filesystem.setIdentity("PunchUI")
+	
+	mainMenu = ui:newScreen( "main" )
 
-	myUI:newHeader( "topPanel", "header", 0, 0, false)
-	myUI:newFunction( "topPanel", "move this box", 0, 0.02, false, "m",
-						function() myUI:movePanel( "topPanel", math.random(500), math.random(500)) end,
-						"Use to randomly move this panel." )
-	myUI:newFunction( "topPanel", "remove this box, please!", 0, 0.03, false, "r",
-						function() myUI:removePanel( "topPanel") end,
-						"Use to remove this panel." )
-	myUI:newInput( "bottomPanel", "test", 200, 0, 100, 3, "t", "type text in here", "" )
-	local quitFkt = function()
-		myUI:newMsgBox( "Really quit?", "Are you sure you want to leave this awesome app?",
-			{
-		{name = "yes", func = love.event.quit, key = "y"},
-		{name = "no", key = "n"}
-			}
-		)
-	end
-	myUI:newFunction( "bottomPanel", "Quit", 0, 0, false, "q", quitFkt, "Close window" )
-	myUI:newText( "topPanel", "testText", 0, 0.06, 250, "A text with {r}red{w} and {g}green{w} words. And a few lines, of course. {r}red{w}white{w}{g}green{w}.")
+	mainMenu:addPanel( "centerPanel",
+			love.graphics.getWidth()/2-100,
+			love.graphics.getHeight()/2-120,
+			200, 240 )
 
-end
+	mainMenu:addHeader( "centerPanel", "welcome", 0, 0, "Welcome" )
+	mainMenu:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}! Hit keys to test the functionality. \nCheck out the github site for explanations." )
 
-function love.update( dt )
-	myUI:update( dt )
+	ui:setActiveScreen( mainMenu )
+
+	mainMenu:addFunction( "centerPanel", "quit",0, 100, "Quit", "q", love.event.quit )
+	mainMenu:addFunction( "centerPanel", "spawn",0, 113, "Spawn new panel", "s", spawnNewBox )
 end
 
 function love.draw()
-	myUI:draw()
+	ui:draw()
 end
 
 function love.keypressed( key, unicode )
-	myUI:keypressed( key, unicode )
+	ui:keypressed( key, unicode )
+end
+
+function spawnNewBox()
+	mainMenu:addPanel( "newPanel", 10, 10, 200, 400 )
+	mainMenu:addHeader( "newPanel", "header", 0, 0, "Text Input Test" )
+	mainMenu:addText( "newPanel", "explanation", 10, 20, math.huge, 100, "Below is an input box. By typing the letter infront of it, you'll gain access to the content. Type some text, then press enter (accept) or escape (resets the text) to finish.") 
+
+	mainMenu:addInput( "newPanel", "firstInput", 0, 143, nil, 4, "t" )
+	mainMenu:addFunction( "newPanel", "close", 0, 340, "Close", "c", function() mainMenu:removePanel( "newPanel" ) end )
 end

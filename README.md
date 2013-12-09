@@ -15,3 +15,8 @@ Features:
   
 main.lua example is included. Install Love2D go to the folder and run:
 ```love .```
+
+Credits:
+---------
+
+  - This library uses Kikito's awesome [middleclass](https://github.com/kikito/middleclass) library.

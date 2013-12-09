@@ -15,9 +15,10 @@ function TextBlock:initialize( name, x, y, width, height, text, font, renderImg 
 	self.y = y or 0
 	self.width = width or 100
 	self.font = font
-	self.maxLines = math.floor(height/self.font:getHeight())
 	self.original = text or ""
 	self.renderImg = renderImg
+
+	self.maxLines = math.huge
 	
 	self.plain = self.original:gsub("{.-}", "")
 	self.lines = self:wrap()
@@ -176,15 +177,20 @@ function TextBlock:setText( text )
 	self.original = text
 	self.plain = self.original:gsub("{.-}", "")
 	self.lines = self:wrap()
-	self.fragments = self:colorSplit()
-
-	self.height = #self.lines*self.font:getHeight()
 	
-	if self.renderImg then
-		self:render()
-	end
+	print(#self.lines, self.maxLines )
+	if #self.lines <= self.maxLines then
+		self.fragments = self:colorSplit()
 
-	return self.width, self.height
+		self.height = #self.lines*self.font:getHeight()
+
+		if self.renderImg then
+			self:render()
+		end
+		return true
+	else
+		return false
+	end
 end
 
 function TextBlock:setDimensions( width, height )

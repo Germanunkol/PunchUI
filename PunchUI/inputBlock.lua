@@ -13,21 +13,24 @@ function InputBlock:initialize( name, x, y, width, height, font )
 	self.back = ""
 	self.cursorX = 0
 	self.cursorY = 0
-	self.maxLines = lines
+	self.maxLines = math.floor(height/self.font:getHeight())
 end
 
 function InputBlock:keypressed( key, unicode )
+	-- back up text incase anything goes wrong:
+	local front, back = self.front, self.back
+	local changed = false
+
 	if key == "backspace" then
 		local len = #self.front
 		if len > 0 then
 			self.front = self.front:sub(1, len-1)
-			self:setText( self.front .. self.back )
-			self.cursorX, self.cursorY = self:getCharPos( #self.front )
+			changed = true
 		end
 	elseif key == "escape" then
 		self.front = self.fullContent
-		self:setText( self.front )
 		self.back = ""
+		changed = true
 		return "stop"
 	elseif key == "return" then
 		self.fullContent = self.front .. self.back
@@ -35,30 +38,26 @@ function InputBlock:keypressed( key, unicode )
 	elseif unicode >= 32 and unicode < 127 then
 		local chr = string.char(unicode)
 		self.front = self.front .. chr
-		self:setText( self.front .. self.back )
-		self.cursorX, self.cursorY = self:getCharPos( #self.front )
+		changed = true
 	elseif key == "left" then
 		local len = #self.front
 		if len > 0 then
 			self.back = self.front:sub( len,len ) .. self.back
 			self.front = self.front:sub(1, len-1)
-			self:setText( self.front .. self.back )
-			self.cursorX, self.cursorY = self:getCharPos( #self.front )
+			changed = true
 		end
 	elseif key == "right" then
 		local len = #self.back
 		if len > 0 then
 			self.front = self.front .. self.back:sub(1,1)
 			self.back = self.back:sub(2,len)
-			self:setText( self.front .. self.back )
-			self.cursorX, self.cursorY = self:getCharPos( #self.front )
+			changed = true
 		end
 	elseif key == "delete" then
 		local len = #self.back
 		if len > 0 then
 			self.back = self.back:sub(2,len)
-			self:setText( self.front .. self.back )
-			self.cursorX, self.cursorY = self:getCharPos( #self.front )
+			changed = true
 		end
 	elseif key == "home" then
 		self.back = self.front .. self.back
@@ -68,6 +67,25 @@ function InputBlock:keypressed( key, unicode )
 		self.front = self.front .. self.back
 		self.back = ""
 		self.cursorX, self.cursorY = self:getCharPos( #self.front )
+	end
+
+	if changed then
+		local lines = self.lines
+		local original = self.original
+		local plain = self.plain
+
+		-- is the new text not too long?
+		local success = self:setText( self.front .. self.back )
+		if success then
+			self.cursorX, self.cursorY = self:getCharPos( #self.front )
+		else
+			-- change back because text was too long
+			self.lines = lines
+			self.original = original
+			self.plain = plain
+			self.front = front
+			self.back = back
+		end
 	end
 end
 

@@ -10,6 +10,7 @@ function Screen:initialize( name, font )
 	self.font = font
 
 	self.panels = {}
+	self.msgBox = nil
 end
 
 function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding )
@@ -19,7 +20,7 @@ function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding )
 	if old then
 		self:removePanel( name )
 	end
-
+	print( "new panel:", name, font, self.font)
 	local pan = Panel:new( name, x, y, minWidth, minHeight, font or self.font, padding )
 	table.insert( self.panels, pan )
 	return pan
@@ -68,6 +69,10 @@ function Screen:draw()
 	for k,p in ipairs(self.panels) do
 		p:draw()
 	end
+	
+	if self.msgBox then
+		self.msgBox:draw()
+	end
 end
 
 function Screen:addFunction( panelName, name, x, y, txt, key, event )
@@ -77,18 +82,53 @@ function Screen:addFunction( panelName, name, x, y, txt, key, event )
 end
 
 function Screen:keypressed( key, unicode )
-	for k, p in pairs( self.panels ) do
-		if p.activeInput then
-			p:enterText( key, unicode )
-			return
+	if self.msgBox then
+		self.msgBox:keypressed( key, unicode )
+	else
+		for k, p in pairs( self.panels ) do
+			if p.activeInput then
+				p:enterText( key, unicode )
+				return
+			end
+		end
+		for k, p in pairs( self.panels ) do
+			-- allow only one panel to react to the input:
+			if p:keypressed( key, unicode ) then
+				return
+			end
 		end
 	end
-	for k, p in pairs( self.panels ) do
-		-- allow only one panel to react to the input:
-		if p:keypressed( key, unicode ) then
-			return
-		end
+end
+
+function Screen:newMsgBox( header, msg, x, y, width, commands )
+
+	width = width or love.graphics.getWidth()/4 + 40
+	x = x or (love.graphics.getWidth() - width)/2
+	y = y or 2*love.graphics.getHeight()/5
+	local msgBox = Panel:new( "msgBox", x, y, width, 100, self.font, 20 )
+	local curY = 0
+	msgBox:addHeader( "header", curY, 0, header )
+	curY = curY + self.font:getHeight()
+	local t, height = msgBox:addText( "text", 10, curY, nil, 1, msg )
+	curY = curY + height + 10
+	
+	for k, c in ipairs( commands ) do
+		msgBox:addFunction( tostring(k), 10, curY, c.txt, c.key, 
+							function()
+								self:removeMsgBox()
+								if c.event then
+									c.event()
+								end
+							end )
+		curY = curY + self.font:getHeight()
 	end
+
+	msgBox.h = (#commands+2)*self.font:getHeight() + height + 30
+	self.msgBox = msgBox
+end
+
+function Screen:removeMsgBox()
+	self.msgBox = nil
 end
 
 return Screen

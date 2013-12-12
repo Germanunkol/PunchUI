@@ -12,8 +12,7 @@ Features:
   - tooltip if you press shift + function key
   - message boxes, with header, text and multiple possible answers
   - word wrap
-  - password input
-  
+  - multi-colour text boxes
   
 main.lua example is included. Install Love2D go to the folder and run:
 ```love .```

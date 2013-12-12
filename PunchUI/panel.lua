@@ -33,10 +33,10 @@ function Panel:addText( name, x, y, width, height, txt )
 	local maxWidth = self.w - x - self.padding
 	
 	width = math.min( width or math.huge, maxWidth )
-
+	print(name, x, y, width, height, txt, self.font, true, self)
 	local t = TextBlock:new( name, x, y, width, height, txt, self.font, true )
 	table.insert( self.texts, t )
-	return t
+	return t, t.height
 end
 
 function Panel:addHeader( name, x, y, txt )
@@ -46,6 +46,8 @@ end
 function Panel:draw()
 	love.graphics.push()
 	love.graphics.translate( self.x, self.y )
+	love.graphics.setColor( COLORS.PANEL_BG )
+	love.graphics.rectangle( "fill", 0, 0, self.w, self.h )
 	love.graphics.setColor( COLORS.BORDER )
 	love.graphics.rectangle( "line", 0, 0, self.w, self.h )
 	for k, v in ipairs( self.texts ) do

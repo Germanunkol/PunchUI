@@ -30,8 +30,6 @@ function TextBlock:initialize( name, x, y, width, height, text, font, renderImg 
 	if self.renderImg then
 		self:render()
 	end
-
-	return self.width, self.height
 end
 
 function TextBlock:wrap()

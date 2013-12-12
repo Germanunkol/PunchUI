@@ -16,11 +16,11 @@ function love.load()
 
 	ui:setActiveScreen( mainMenu )
 	local y = 120
-	mainMenu:addFunction( "centerPanel", "login",0,y, "Login", "i", spawnLoginBox )
+	mainMenu:addFunction( "centerPanel", "login",0,y, "Login", "1", spawnLoginBox )
 	y = y + 13
-	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "s", spawnNewBox )
+	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "2", spawnNewBox )
 	y = y + 13
-	mainMenu:addFunction( "centerPanel", "quit",0, y, "Quit", "q", love.event.quit )
+	mainMenu:addFunction( "centerPanel", "quit",0, y, "Quit", "q", quit )
 
 end
 
@@ -49,4 +49,11 @@ function spawnLoginBox()
 
 	mainMenu:addHeader( "login", "header2", 0, 26, "Password:")
 	mainMenu:addPassword( "login", "password", 10, 40, nil, 20, "p" )
+end
+
+function quit()
+	local commands = {}
+	commands[1] = { txt = "yes", key = "y", event = love.event.quit }
+	commands[2] = { txt = "no", key = "n" }
+	mainMenu:newMsgBox( "Really quit?", "Answering yes will close the app.", nil, nil, nil, commands)
 end

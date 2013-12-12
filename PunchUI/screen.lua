@@ -20,7 +20,6 @@ function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding )
 	if old then
 		self:removePanel( name )
 	end
-	print( "new panel:", name, font, self.font)
 	local pan = Panel:new( name, x, y, minWidth, minHeight, font or self.font, padding )
 	table.insert( self.panels, pan )
 	return pan

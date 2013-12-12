@@ -33,7 +33,6 @@ function Panel:addText( name, x, y, width, height, txt )
 	local maxWidth = self.w - x - self.padding
 	
 	width = math.min( width or math.huge, maxWidth )
-	print(name, x, y, width, height, txt, self.font, true, self)
 	local t = TextBlock:new( name, x, y, width, height, txt, self.font, true )
 	table.insert( self.texts, t )
 	return t, t.height

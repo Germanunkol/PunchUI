@@ -16,9 +16,9 @@ function love.load()
 
 	ui:setActiveScreen( mainMenu )
 	local y = 120
-	mainMenu:addFunction( "centerPanel", "login",0,y, "Login", "1", spawnLoginBox )
+	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "1", spawnNewBox )
 	y = y + 13
-	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "2", spawnNewBox )
+	mainMenu:addFunction( "centerPanel", "login",0,y, "Login example", "2", spawnLoginBox )
 	y = y + 13
 	mainMenu:addFunction( "centerPanel", "quit",0, y, "Quit", "q", quit )
 

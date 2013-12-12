@@ -19,6 +19,7 @@ function TextBlock:initialize( name, x, y, width, height, text, font, renderImg 
 	self.renderImg = renderImg
 
 	self.maxLines = math.huge
+	self.trueWidth = 0
 	
 	self.plain = self.original:gsub("{.-}", "")
 	self.lines = self:wrap()
@@ -92,6 +93,15 @@ function TextBlock:wrap()
 				table.insert( wLines, shortLine )
 				restLine = restLine:sub( #shortLine+1 )
 			end
+		end
+	end
+
+	self.trueWidth = 0
+	local w = 0
+	for k, l in pairs( wLines ) do
+		w = self.font:getWidth(l)
+		if w > self.trueWidth then
+			self.trueWidth = w
 		end
 	end
 
@@ -198,13 +208,10 @@ function TextBlock:setDimensions( width, height )
 end
 
 function TextBlock:render()
-	self.canvasWidth = self.width
+		self.canvasWidth = self.trueWidth
 	self.canvasHeight = self.height
 	love.graphics.setColor( 255,255,255,255 )
 
-	if self.canvasWidth == math.huge then
-		self.canvasWidth = self.font:getWidth( self.lines[1] )
-	end
 	self.canvas = love.graphics.newCanvas( self.canvasWidth, self.canvasHeight )
 	love.graphics.setCanvas( self.canvas )
 	love.graphics.setFont( self.font )

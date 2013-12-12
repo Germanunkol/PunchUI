@@ -95,7 +95,6 @@ function InputBlock:keypressed( key, unicode )
 end
 
 function InputBlock:setActive( bool )
-	print("active:", bool)
 	self.active = bool
 	if self.active then
 		self.canvas = false

@@ -95,7 +95,15 @@ function InputBlock:keypressed( key, unicode )
 end
 
 function InputBlock:setActive( bool )
+	print("active:", bool)
 	self.active = bool
+	if self.active then
+		self.canvas = false
+		self.renderImg = false
+	else
+		self.renderImg = true
+		self:render()
+	end
 end
 
 function InputBlock:draw()

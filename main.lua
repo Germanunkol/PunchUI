@@ -37,7 +37,7 @@ function spawnNewBox()
 	mainMenu:addHeader( "newPanel", "header", 0, 0, "Text Input Test" )
 	mainMenu:addText( "newPanel", "explanation", 10, 20, math.huge, 100, "Below is an input box. By typing the letter infront of it, you'll gain access to the content. Type some text!") 
 
-	mainMenu:addInput( "newPanel", "firstInput", 0, 143, nil, 50, "t" )
+	mainMenu:addInput( "newPanel", "firstInput", 0, 100, nil, 50, "t" )
 	mainMenu:addText( "newPanel", "explanation", 10, 200, math.huge, 100, "While typing, other functions are disabled. Finish typing by pressing enter (accept) or escape (reset content).") 
 	mainMenu:addFunction( "newPanel", "close", 0, 340, "Close", "c", function() mainMenu:removePanel( "newPanel" ) end )
 end

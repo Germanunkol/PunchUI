@@ -2,6 +2,10 @@
 
 return {
 	BORDER = { 255, 128, 0, 255, ID = "{|}" },
+	-- inactive:
+	BORDER_IN = { 128, 64, 0, 128, ID = "{|}" },
+
+
 	PANEL_BG = { 0, 0, 0, 230, ID = "{|}" },
 	PLAIN_TEXT = { 255, 255, 255, 255, ID = "{p}" },
 

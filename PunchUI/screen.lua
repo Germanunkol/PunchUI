@@ -66,12 +66,14 @@ function Screen:addHeader( panelName, name, x, y, txt )
 end
 
 function Screen:draw()
+	local inactive = self.msgBox and true or false
+
 	for k,p in ipairs(self.panels) do
-		p:draw()
+		p:draw( inactive )
 	end
 	
 	if self.msgBox then
-		self.msgBox:draw()
+		self.msgBox:draw( false )
 	end
 end
 

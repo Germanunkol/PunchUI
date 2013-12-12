@@ -43,13 +43,18 @@ function Panel:addHeader( name, x, y, txt )
 	return self:addText( name, x, y, math.huge, 1, COLORS.HEADER.ID ..txt )
 end
 
-function Panel:draw()
+function Panel:draw( inactive )
 	love.graphics.push()
 	love.graphics.translate( self.x, self.y )
 	love.graphics.setColor( COLORS.PANEL_BG )
 	love.graphics.rectangle( "fill", 0, 0, self.w, self.h )
-	love.graphics.setColor( COLORS.BORDER )
-	love.graphics.rectangle( "line", 0, 0, self.w, self.h )
+	if inactive then
+		love.graphics.setColor( COLORS.BORDER_IN )
+		love.graphics.rectangle( "line", 0, 0, self.w, self.h )
+	else
+		love.graphics.setColor( COLORS.BORDER )
+		love.graphics.rectangle( "line", 0, 0, self.w, self.h )
+	end
 	for k, v in ipairs( self.texts ) do
 		v:draw()
 	end

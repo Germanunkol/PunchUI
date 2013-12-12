@@ -212,6 +212,7 @@ function TextBlock:render()
 		love.graphics.setColor( f.color )
 		love.graphics.print( f.txt, f.x, f.y )
 	end
+	--self.canvas:getImageData():encode( love.timer.getTime() .. ".png" )
 	love.graphics.setCanvas()
 end
 

@@ -12,12 +12,16 @@ function love.load()
 			200, 240 )
 
 	mainMenu:addHeader( "centerPanel", "welcome", 0, 0, "Welcome" )
-	mainMenu:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}! Hit keys to test the functionality. \nCheck out the github site for explanations." )
+	mainMenu:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}! Hit keys indicated below to test the functionality. \nCheck out the github site for explanations." )
 
 	ui:setActiveScreen( mainMenu )
+	local y = 120
+	mainMenu:addFunction( "centerPanel", "login",0,y, "Login", "i", spawnLoginBox )
+	y = y + 13
+	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "s", spawnNewBox )
+	y = y + 13
+	mainMenu:addFunction( "centerPanel", "quit",0, y, "Quit", "q", love.event.quit )
 
-	mainMenu:addFunction( "centerPanel", "quit",0, 100, "Quit", "q", love.event.quit )
-	mainMenu:addFunction( "centerPanel", "spawn",0, 113, "Spawn new panel", "s", spawnNewBox )
 end
 
 function love.draw()
@@ -36,4 +40,13 @@ function spawnNewBox()
 	mainMenu:addInput( "newPanel", "firstInput", 0, 143, nil, 50, "t" )
 	mainMenu:addText( "newPanel", "explanation", 10, 200, math.huge, 100, "While typing, other functions are disabled. Finish typing by pressing enter (accept) or escape (reset content).") 
 	mainMenu:addFunction( "newPanel", "close", 0, 340, "Close", "c", function() mainMenu:removePanel( "newPanel" ) end )
+end
+
+function spawnLoginBox()
+	mainMenu:addPanel( "login", love.graphics.getWidth()/2 + 150, 10, 150, 150)
+	mainMenu:addHeader( "login", "header", 0, 0, "Username:")
+	mainMenu:addInput( "login", "username", 10, 14, nil, 20, "u" )
+
+	mainMenu:addHeader( "login", "header2", 0, 26, "Password:")
+	mainMenu:addPassword( "login", "password", 10, 40, nil, 20, "p" )
 end

@@ -38,6 +38,9 @@ function TextBlock:wrap()
 	local lines = {}
 	self.plain = self.plain .. "\n"
 	for line in self.plain:gmatch( "([^\n]-\n)" ) do
+		if self.password then
+			line = string.rep("*", #line-1)
+		end
 		table.insert( lines, line )
 	end
 
@@ -177,8 +180,6 @@ function TextBlock:setText( text )
 	self.original = text
 	self.plain = self.original:gsub("{.-}", "")
 	self.lines = self:wrap()
-	
-	print(#self.lines, self.maxLines )
 	if #self.lines <= self.maxLines then
 		self.fragments = self:colorSplit()
 

@@ -70,7 +70,7 @@ function Panel:addFunction( name, x, y, txt, key, event )
 	return newEvent
 end
 
-function Panel:addInput( name, x, y, width, height, key )
+function Panel:addInput( name, x, y, width, height, key, password )
 	-- add a function which will set the new input box to active:
 	-- add the key infront of the input box:
 	local event = function()
@@ -86,11 +86,12 @@ function Panel:addInput( name, x, y, width, height, key )
 	
 	width = math.min( width or math.huge, maxWidth )
 
-	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font )
+	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, password )
 
 	table.insert(self.inputs, i)
 	return i
 end
+
 
 function Panel:inputByName( name )
 	for k, i in ipairs( self.inputs ) do

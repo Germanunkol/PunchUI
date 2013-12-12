@@ -6,13 +6,14 @@ local COLORS = require(PATH .. "colors")
 
 local InputBlock = TextBlock:subclass("InputBlock")
 
-function InputBlock:initialize( name, x, y, width, height, font )
+function InputBlock:initialize( name, x, y, width, height, font, password )
 	TextBlock.initialize( self, name, x, y, width, height, "", font, false )
 	self.fullContent = ""
 	self.front = ""
 	self.back = ""
 	self.cursorX = 0
 	self.cursorY = 0
+	self.password = password or false
 	self.maxLines = math.floor(height/self.font:getHeight())
 end
 
@@ -20,6 +21,7 @@ function InputBlock:keypressed( key, unicode )
 	-- back up text incase anything goes wrong:
 	local front, back = self.front, self.back
 	local changed = false
+	local stop
 
 	if key == "backspace" then
 		local len = #self.front
@@ -31,10 +33,10 @@ function InputBlock:keypressed( key, unicode )
 		self.front = self.fullContent
 		self.back = ""
 		changed = true
-		return "stop"
+		stop = true
 	elseif key == "return" then
 		self.fullContent = self.front .. self.back
-		return "stop"
+		stop = true
 	elseif unicode >= 32 and unicode < 127 then
 		local chr = string.char(unicode)
 		self.front = self.front .. chr
@@ -87,11 +89,13 @@ function InputBlock:keypressed( key, unicode )
 			self.back = back
 		end
 	end
+	if stop then
+		return "stop"
+	end
 end
 
 function InputBlock:setActive( bool )
 	self.active = bool
-	self.cursorX, self.cursorY = 0,0
 end
 
 function InputBlock:draw()

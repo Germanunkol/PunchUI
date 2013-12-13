@@ -56,6 +56,15 @@ function spawnLoginBox()
 	scr:addPassword( "centerPanel", "password", 10, 40, nil, 20, "p" )
 end
 
+function spawnLicense()
+
+	scr:addPanel( "centerPanel", love.graphics.getWidth()/2 - 300, love.graphics.getHeight()/2 - 200, 600, 400 )
+	scr:addHeader( "centerPanel", "header", 0, 0, "License:" )
+
+	license = love.filesystem.read("License.txt")
+	scr:addText( "centerPanel", "license", 10, 20, math.huge, nil, license )
+end
+
 function quit()
 	local commands = {}
 	commands[1] = { txt = "Yes", key = "y", event = love.event.quit }

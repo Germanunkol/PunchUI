@@ -11,6 +11,7 @@ function Screen:initialize( name, font )
 
 	self.panels = {}
 	self.msgBox = nil
+	self.menus = {}
 end
 
 function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding )
@@ -66,9 +67,13 @@ end
 
 function Screen:draw()
 	local inactive = self.msgBox and true or false
+	local inactiveMenu = #self.menus > 0
 
 	for k,p in ipairs(self.panels) do
-		p:draw( inactive )
+		p:draw( inactive or inactiveMenu )
+	end
+	for k,m in ipairs(self.menus) do
+		m:draw( inactive )
 	end
 	
 	if self.msgBox then
@@ -85,6 +90,12 @@ end
 function Screen:keypressed( key, unicode )
 	if self.msgBox then
 		self.msgBox:keypressed( key, unicode )
+	elseif #self.menus > 0 then
+		if key == "escape" then
+			self.menus[#self.menus] = nil
+		else
+			self.menus[#self.menus]:keypressed( key, unicode )
+		end
 	else
 		for k, p in pairs( self.panels ) do
 			if p.activeInput then
@@ -110,7 +121,7 @@ function Screen:newMsgBox( header, msg, x, y, width, commands )
 	local curY = 0
 	msgBox:addHeader( "header", curY, 0, header )
 	curY = curY + self.font:getHeight()
-	local t, height = msgBox:addText( "text", 10, curY, nil, 1, msg )
+	local t, width, height = msgBox:addText( "text", 10, curY, nil, 1, msg )
 	curY = curY + height + 10
 	
 	for k, c in ipairs( commands ) do
@@ -130,6 +141,51 @@ end
 
 function Screen:removeMsgBox()
 	self.msgBox = nil
+end
+
+function Screen:newMenu( header, x, y, width, list )
+	width = width or love.graphics.getWidth()/5 + 8
+	x = x or 10
+	y = y or 10
+	local ID = #self.menus + 1
+	local menuPanel = Panel:new( "menuPanel" .. ID, x, y, width, 100, self.font, 4 )
+	
+	local curY = 0
+	local ev, w, h
+	local maxWidth = 0
+	for k, v in ipairs( list ) do
+
+		local ev = function()
+			local numMenus = #self.menus
+
+			if v.event then
+				v.event()
+			end
+
+			-- if the event did NOT create a sub menu, then
+			-- remove all menus. Otherwise, keep displaying
+			-- the menus.
+			if numMenus == #self.menus then
+				self.menus = {}
+			end
+		end
+
+		ev, w, h = menuPanel:addFunction( tostring(k), 0, curY, v.txt, tostring(k), ev )
+		maxWidth = math.max( maxWidth, w )
+		curY = curY + self.font:getHeight() + 8
+	end
+
+	curY = 0
+	for k, v in ipairs( list ) do
+		curY = curY + self.font:getHeight() + 8
+		if k < #list then
+			menuPanel:addLine( 4, curY , maxWidth + 4, curY )
+		end
+	end
+	
+	menuPanel.h = curY
+	menuPanel.w = 8 + maxWidth
+	self.menus[ID] = menuPanel
 end
 
 return Screen

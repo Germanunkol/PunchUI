@@ -22,6 +22,8 @@ function Panel:initialize( name, x, y, w, h, font, padding )
 	self.events = {}
 	self.inputs = {}
 
+	self.lines = {}
+
 	self.activeInput = nil
 end
 
@@ -35,7 +37,7 @@ function Panel:addText( name, x, y, width, height, txt )
 	width = math.min( width or math.huge, maxWidth )
 	local t = TextBlock:new( name, x, y, width, height, txt, self.font, true )
 	table.insert( self.texts, t )
-	return t, t.height
+	return t, t.trueWidth or t.width, t.height
 end
 
 function Panel:addHeader( name, x, y, txt )
@@ -54,6 +56,9 @@ function Panel:draw( inactive )
 		love.graphics.setColor( COLORS.BORDER )
 		love.graphics.rectangle( "line", 0, 0, self.w, self.h )
 	end
+	for k, l in ipairs( self.lines ) do
+		love.graphics.line( l.x1, l.y1, l.x2, l.y2 )
+	end
 	for k, v in ipairs( self.texts ) do
 		v:draw()
 	end
@@ -66,14 +71,15 @@ end
 function Panel:addFunction( name, x, y, txt, key, event )
 	local fullTxt = COLORS.FUNCTION.ID .. key .. " "
 	fullTxt = fullTxt .. COLORS.PLAIN_TEXT.ID .. txt
-	self:addText( name, x, y, math.huge, 1, fullTxt )
+	local t, w, h = self:addText( name, x, y, math.huge, 1, fullTxt )
+	print(t,w,h )
 	local newEvent = {
 		name = name,
 		key = key,
 		event = event,
 	}
 	table.insert( self.events, newEvent )
-	return newEvent
+	return newEvent, w, h
 end
 
 function Panel:addInput( name, x, y, width, height, key, password )
@@ -111,7 +117,9 @@ function Panel:keypressed( key, unicode )
 	if not self.activeInput then
 		for k, f in pairs( self.events ) do
 			if f.key == key then
-				f.event()
+				if f.event then
+					f.event()
+				end
 				return true
 			end
 		end
@@ -128,6 +136,10 @@ function Panel:enterText( key, unicode )
 			self.activeInput = nil
 		end
 	end
+end
+
+function Panel:addLine( x1, y1, x2, y2 )
+	self.lines[#self.lines+1] = {x1=x1, y1=y1, x2=x2, y2=y2 }
 end
 
 return Panel

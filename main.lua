@@ -18,11 +18,14 @@ function love.load()
 	local y = 120
 	mainMenu:addFunction( "centerPanel", "spawn",0, y, "Spawn new panel", "1", spawnNewBox )
 	y = y + 13
+	mainMenu:addFunction( "centerPanel", "menu",0, y, "new menu", "0", spawnMenu )
+	y = y + 13
 	mainMenu:addFunction( "centerPanel", "login",0,y, "Login example", "2", spawnLoginBox )
 	y = y + 13
 	mainMenu:addFunction( "centerPanel", "quit",0, y, "Quit", "q", quit )
 
 end
+
 
 function love.draw()
 	ui:draw()
@@ -30,6 +33,16 @@ end
 
 function love.keypressed( key, unicode )
 	ui:keypressed( key, unicode )
+end
+
+function spawnMenu()
+	local list = {
+		{txt = "test"},
+		{txt = "this"},
+		{txt = "thing"},
+		{txt = "close", event = quit },
+	}
+	mainMenu:newMenu( "main menu:", 10, 100, nil, list )
 end
 
 function spawnNewBox()

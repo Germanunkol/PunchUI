@@ -30,6 +30,7 @@ end
 function Panel:addText( name, x, y, width, height, txt )
 	-- if the width is not given, make sure text does not
 	-- move outside of panel:
+	print( name, x, y, width, height, txt )
 	x = x + self.padding
 	y = y + self.padding
 	local maxWidth = self.w - x - self.padding
@@ -69,10 +70,9 @@ function Panel:draw( inactive )
 end
 
 function Panel:addFunction( name, x, y, txt, key, event )
-	local fullTxt = COLORS.FUNCTION.ID .. key .. " "
+	local fullTxt = COLORS.FUNCTION.ID .. string.upper(key) .. " "
 	fullTxt = fullTxt .. COLORS.PLAIN_TEXT.ID .. txt
 	local t, w, h = self:addText( name, x, y, math.huge, 1, fullTxt )
-	print(t,w,h )
 	local newEvent = {
 		name = name,
 		key = key,

@@ -143,8 +143,8 @@ function Screen:removeMsgBox()
 	self.msgBox = nil
 end
 
-function Screen:newMenu( header, x, y, width, list )
-	width = width or love.graphics.getWidth()/5 + 8
+function Screen:newMenu( x, y, minWidth, list )
+	width = love.graphics.getWidth()/5 + 8
 	x = x or 10
 	y = y or 10
 	local ID = #self.menus + 1
@@ -152,7 +152,7 @@ function Screen:newMenu( header, x, y, width, list )
 	
 	local curY = 0
 	local ev, w, h
-	local maxWidth = 0
+	local maxWidth = minWidth or 0
 	for k, v in ipairs( list ) do
 
 		local ev = function()
@@ -165,8 +165,16 @@ function Screen:newMenu( header, x, y, width, list )
 			-- if the event did NOT create a sub menu, then
 			-- remove all menus. Otherwise, keep displaying
 			-- the menus.
-			if numMenus == #self.menus then
+			if numMenus >= #self.menus then
 				self.menus = {}
+			else
+				-- consider the newly added menu a sub-menu
+				-- of the last one:
+				local cur = #self.menus
+				if self.menus[cur - 1] then
+					self.menus[cur].x = self.menus[cur-1].x + self.menus[cur-1].w
+					self.menus[cur].y = self.menus[cur-1].y + (4+self.font:getHeight())*k
+				end
 			end
 		end
 

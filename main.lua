@@ -48,12 +48,12 @@ function spawnInputBox()
 end
 
 function spawnLoginBox()
-	scr:addPanel( "centerPanel", love.graphics.getWidth()/2 - 75, love.graphics.getHeight()/2 - 75, 150, 150 )
+	scr:addPanel( "centerPanel", love.graphics.getWidth()/2 - 150, love.graphics.getHeight()/2 - 75, 300, 150 )
 	scr:addHeader( "centerPanel", "header", 0, 0, "Username:")
-	scr:addInput( "centerPanel", "username", 10, 14, nil, 20, "u" )
+	scr:addInput( "centerPanel", "username", 10, 14, nil, 20, "u", checkUser )
 
 	scr:addHeader( "centerPanel", "header2", 0, 26, "Password:")
-	scr:addPassword( "centerPanel", "password", 10, 40, nil, 20, "p" )
+	scr:addPassword( "centerPanel", "password", 10, 40, nil, 20, "p", checkPassword )
 end
 
 function spawnLicense()
@@ -63,6 +63,21 @@ function spawnLicense()
 
 	license = love.filesystem.read("License.txt")
 	scr:addText( "centerPanel", "license", 10, 20, math.huge, nil, license )
+end
+
+local user, password = "", ""
+
+function checkUser( txt )
+	user = txt
+end
+
+function checkPassword( txt )
+	password = txt
+	if user == "PunchUI" and password == "cake" then
+		scr:addText( "centerPanel", "result", 10, 60, math.huge, nil, "Correct Password!" )
+	else
+		scr:addText( "centerPanel", "result", 10, 60, math.huge, nil, "Wrong login data!\n{g}Try the following...\nUsername: 'PunchUI'\nPassword: 'cake'" )
+	end
 end
 
 function quit()

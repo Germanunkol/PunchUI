@@ -43,14 +43,14 @@ function Screen:panelByName( name )
 	end
 end
 
-function Screen:addInput( panelName, name, x, y, width, height, key )
+function Screen:addInput( panelName, name, x, y, width, height, key, event )
 	local p = self:panelByName( panelName )
-	i = p:addInput( name, x, y, width, height, key )
+	i = p:addInput( name, x, y, width, height, key, event )
 	return i
 end
-function Screen:addPassword( panelName, name, x, y, width, height, key )
+function Screen:addPassword( panelName, name, x, y, width, height, key, event )
 	local p = self:panelByName( panelName )
-	i = p:addInput( name, x, y, width, height, key, true )
+	i = p:addInput( name, x, y, width, height, key, event, true )
 	return i
 end
 function Screen:addText( panelName, name, x, y, width, height, txt )

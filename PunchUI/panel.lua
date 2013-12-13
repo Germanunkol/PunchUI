@@ -28,6 +28,12 @@ function Panel:initialize( name, x, y, w, h, font, padding )
 end
 
 function Panel:addText( name, x, y, width, height, txt )
+
+	for k, t in ipairs(self.texts) do
+		if t.name == name then
+			table.remove(self.texts, k)
+		end
+	end
 	-- if the width is not given, make sure text does not
 	-- move outside of panel:
 	print( name, x, y, width, height, txt )
@@ -82,7 +88,7 @@ function Panel:addFunction( name, x, y, txt, key, event )
 	return newEvent, w, h
 end
 
-function Panel:addInput( name, x, y, width, height, key, password )
+function Panel:addInput( name, x, y, width, height, key, returnEvent, password )
 	-- add a function which will set the new input box to active:
 	-- add the key infront of the input box:
 	local event = function()
@@ -98,7 +104,7 @@ function Panel:addInput( name, x, y, width, height, key, password )
 	
 	width = math.min( width or math.huge, maxWidth )
 
-	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, password )
+	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password )
 
 	table.insert(self.inputs, i)
 	return i

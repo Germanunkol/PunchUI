@@ -1,13 +1,13 @@
 PunchUI
 =======
 
-A simple User Interface library for the Löve2D engine. No mouse - just keyboard controlled.
+A simple User Interface library for the [Löve2D](http://love2d.org/) engine. No mouse - just keyboard controlled.
 
 Features:
 ---------
   - no mouse needed
-  - resizes panels to content automatically
-  - simple input box, including password functionality.
+  - resizes content to panel size automatically
+  - multiline input box, including password functionality.
   - add actions which are assigned to keys (keys are displayed next to action name)
   - (todo!) tooltip if you press shift + function key
   - message boxes, with header, text and multiple possible answers
@@ -15,8 +15,12 @@ Features:
   - multi-colour text boxes
   - drop-down menus
   
-main.lua example is included. Install Love2D go to the folder and run:
+Example is included in 'main.lua'. Install Love2D, go to the folder and run:
 ```love .```
+
+License:
+---------
+Released under the MIT license, see "License.txt".
 
 Credits:
 ---------

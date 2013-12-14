@@ -18,22 +18,21 @@ function InputBlock:initialize( name, x, y, width, height, font, returnEvent, pa
 	self.returnEvent = returnEvent
 end
 
-function InputBlock:keypressed( key, unicode )
+function InputBlock:keypressed( key )
 	-- back up text incase anything goes wrong:
-	local front, back = self.front, self.back
-	local changed = false
+	self.oldFront, self.oldBack = self.front, self.back
 	local stop
 
 	if key == "backspace" then
 		local len = #self.front
 		if len > 0 then
 			self.front = self.front:sub(1, len-1)
-			changed = true
+			self:update()
 		end
 	elseif key == "escape" then
 		self.front = self.fullContent
 		self.back = ""
-		changed = true
+		self:update()
 		stop = true
 	elseif key == "return" then
 		self.fullContent = self.front .. self.back
@@ -41,29 +40,25 @@ function InputBlock:keypressed( key, unicode )
 		if self.returnEvent then
 			self.returnEvent( self.fullContent )
 		end
-	elseif unicode >= 32 and unicode < 127 then
-		local chr = string.char(unicode)
-		self.front = self.front .. chr
-		changed = true
 	elseif key == "left" then
 		local len = #self.front
 		if len > 0 then
 			self.back = self.front:sub( len,len ) .. self.back
 			self.front = self.front:sub(1, len-1)
-			changed = true
+			self:update()
 		end
 	elseif key == "right" then
 		local len = #self.back
 		if len > 0 then
 			self.front = self.front .. self.back:sub(1,1)
 			self.back = self.back:sub(2,len)
-			changed = true
+			self:update()
 		end
 	elseif key == "delete" then
 		local len = #self.back
 		if len > 0 then
 			self.back = self.back:sub(2,len)
-			changed = true
+			self:update()
 		end
 	elseif key == "home" then
 		self.back = self.front .. self.back
@@ -75,34 +70,50 @@ function InputBlock:keypressed( key, unicode )
 		self.cursorX, self.cursorY = self:getCharPos( #self.front )
 	end
 
-	if changed then
-		local lines = self.lines
-		local original = self.original
-		local plain = self.plain
-
-		-- is the new text not too long?
-		local success = self:setText( self.front .. self.back )
-		if success then
-			self.cursorX, self.cursorY = self:getCharPos( #self.front )
-		else
-			-- change back because text was too long
-			self.lines = lines
-			self.original = original
-			self.plain = plain
-			self.front = front
-			self.back = back
-		end
-	end
 	if stop then
 		return "stop"
+	end
+end
+
+function InputBlock:textinput( letter )
+
+	-- make sure to ignore first letter that's input:
+	if not self.ignoredFirst then
+		self.ignoredFirst = true
+		return
+	end
+	
+	self.oldFront, self.oldBack = self.front, self.back
+	--local chr = string.char(unicode)
+	self.front = self.front .. letter
+	self:update()
+end
+
+function InputBlock:update()
+	local lines = self.lines
+	local original = self.original
+	local plain = self.plain
+
+	-- is the new text not too long?
+	local success = self:setText( self.front .. self.back )
+	if success then
+		self.cursorX, self.cursorY = self:getCharPos( #self.front )
+	else
+		-- change back because text was too long
+		self.lines = lines
+		self.original = original
+		self.plain = plain
+		self.front = self.oldFront
+		self.back = self.oldBack
 	end
 end
 
 function InputBlock:setActive( bool )
 	self.active = bool
 	if self.active then
-		self.canvas = false
+		self.canvas = nil
 		self.renderImg = false
+		self.ignoredFirst = false
 	else
 		self.renderImg = true
 		self:render()

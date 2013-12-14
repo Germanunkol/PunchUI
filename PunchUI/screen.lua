@@ -99,15 +99,24 @@ function Screen:keypressed( key, unicode )
 	else
 		for k, p in pairs( self.panels ) do
 			if p.activeInput then
-				p:enterText( key, unicode )
+				p:keypressed( key, unicode )
 				return
 			end
 		end
+
 		for k, p in pairs( self.panels ) do
 			-- allow only one panel to react to the input:
 			if p:keypressed( key, unicode ) then
 				return
 			end
+		end
+	end
+end
+function Screen:textinput( letter )
+	for k, p in pairs( self.panels ) do
+		if p.activeInput then
+			p:textinput( letter )
+			return
 		end
 	end
 end

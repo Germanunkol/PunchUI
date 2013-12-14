@@ -9,6 +9,7 @@ local UI = class("PunchUI")
 local fallbackFont = love.graphics.newFont( 12 )
 
 function UI:initialize()
+	love.keyboard.setKeyRepeat( true )
 	self.screens = {}
 	self.actScreen = nil
 end
@@ -36,8 +37,16 @@ function UI:setActiveScreen( scr )
 end
 
 function UI:keypressed( key, unicode )
+	print("keypressed", key, unicode )
 	if self.actScreen then
 		self.actScreen:keypressed( key, unicode )
+	end
+end
+
+function UI:textinput( letter, repeated )
+	print("textinput", letter, repeated )
+	if self.actScreen then
+		self.actScreen:textinput( letter )
 	end
 end
 

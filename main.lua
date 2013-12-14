@@ -87,6 +87,10 @@ function quit()
 	scr:newMsgBox( "Really quit?", "Answering yes will close the app.", nil, nil, nil, commands)
 end
 
+function love.update( dt )
+--	ui:update( dt )
+end
+
 function love.draw()
 	ui:draw()
 end
@@ -95,4 +99,6 @@ function love.keypressed( key, unicode )
 	ui:keypressed( key, unicode )
 end
 
-
+function love.textinput( letter )
+	ui:textinput( letter )
+end

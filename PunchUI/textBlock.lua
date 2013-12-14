@@ -208,19 +208,21 @@ function TextBlock:setDimensions( width, height )
 end
 
 function TextBlock:render()
-		self.canvasWidth = self.trueWidth
+	self.canvas = nil
+	self.canvasWidth = self.trueWidth
 	self.canvasHeight = self.height
-	love.graphics.setColor( 255,255,255,255 )
-
-	self.canvas = love.graphics.newCanvas( self.canvasWidth, self.canvasHeight )
-	love.graphics.setCanvas( self.canvas )
-	love.graphics.setFont( self.font )
-	for k, f in ipairs(self.fragments) do
-		love.graphics.setColor( f.color )
-		love.graphics.print( f.txt, f.x, f.y )
+	if self.canvasWidth > 0 and self.canvasHeight > 0 then
+		love.graphics.setColor( 255,255,255,255 )
+		self.canvas = love.graphics.newCanvas( self.canvasWidth, self.canvasHeight )
+		love.graphics.setCanvas( self.canvas )
+		love.graphics.setFont( self.font )
+		for k, f in ipairs(self.fragments) do
+			love.graphics.setColor( f.color )
+			love.graphics.print( f.txt, f.x, f.y )
+		end
+		--self.canvas:getImageData():encode( love.timer.getTime() .. ".png" )
+		love.graphics.setCanvas()
 	end
-	--self.canvas:getImageData():encode( love.timer.getTime() .. ".png" )
-	love.graphics.setCanvas()
 end
 
 function TextBlock:draw()

@@ -129,18 +129,20 @@ function Panel:keypressed( key, unicode )
 				return true
 			end
 		end
-	end
-end
-
-function Panel:enterText( key, unicode )
-	if self.activeInput then
-		-- type the key into the current input box:
+	else
 		local re = self.activeInput:keypressed( key, unicode )
 		-- if "esc" was pressed (or similar), stop:
 		if re == "stop" then
 			self.activeInput:setActive(false)
 			self.activeInput = nil
 		end
+	end
+end
+
+function Panel:textinput( key )
+	if self.activeInput then
+		-- type the key into the current input box:
+		self.activeInput:textinput( key, true )
 	end
 end
 

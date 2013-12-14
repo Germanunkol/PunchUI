@@ -69,6 +69,9 @@ local user, password = "", ""
 
 function checkUser( txt )
 	user = txt
+	if password then
+		checkPassword( password )
+	end
 end
 
 function checkPassword( txt )

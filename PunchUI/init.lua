@@ -37,14 +37,12 @@ function UI:setActiveScreen( scr )
 end
 
 function UI:keypressed( key, unicode )
-	print("keypressed", key, unicode )
 	if self.actScreen then
 		self.actScreen:keypressed( key, unicode )
 	end
 end
 
 function UI:textinput( letter, repeated )
-	print("textinput", letter, repeated )
 	if self.actScreen then
 		self.actScreen:textinput( letter )
 	end

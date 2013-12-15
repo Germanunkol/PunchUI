@@ -48,7 +48,7 @@ function TextBlock:wrap()
 	local restLine
 	local word = "[^ ]* "	-- not space followed by space
 	local tmpLine
-	local letter = "."
+	local letter = "[%z\1-\127\194-\244][\128-\191]*"
 
 	for k, line in ipairs(lines) do
 		if self.font:getWidth( line ) <= self.width then

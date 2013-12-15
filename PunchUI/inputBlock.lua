@@ -23,11 +23,13 @@ function InputBlock:keypressed( key )
 	self.oldFront, self.oldBack = self.front, self.back
 	local stop
 
+	print(key)
+
 	if key == "backspace" then
 		local len = #self.front
 		if len > 0 then
 			self.front = self.front:sub(1, len-1)
-			self:update()
+			self:update( "left" )
 		end
 	elseif key == "escape" then
 		self.front = self.fullContent
@@ -42,17 +44,18 @@ function InputBlock:keypressed( key )
 		end
 	elseif key == "left" then
 		local len = #self.front
+		
 		if len > 0 then
 			self.back = self.front:sub( len,len ) .. self.back
 			self.front = self.front:sub(1, len-1)
-			self:update()
+			self:update( "left" )
 		end
 	elseif key == "right" then
 		local len = #self.back
 		if len > 0 then
 			self.front = self.front .. self.back:sub(1,1)
 			self.back = self.back:sub(2,len)
-			self:update()
+			self:update( "right" )
 		end
 	elseif key == "delete" then
 		local len = #self.back
@@ -86,13 +89,37 @@ function InputBlock:textinput( letter )
 	self.oldFront, self.oldBack = self.front, self.back
 	--local chr = string.char(unicode)
 	self.front = self.front .. letter
-	self:update()
+	self:update( "right" )
 end
 
-function InputBlock:update()
+function InputBlock:update( cursorDirection )
 	local lines = self.lines
 	local original = self.original
 	local plain = self.plain
+	
+	-- Check if the last operation split up an umlaut or
+	-- similar:
+	-- last is the last character on the front part
+	-- first is the first character of the second part
+	local last = self.front:sub(-1)
+	local first = self.back:sub(1,1)
+	local bLast = string.byte(last)
+	local bFirst = string.byte(first)
+	if bLast and bLast >= 194 then
+		if bFirst and bFirst > 127 and bFirst < 194 then
+			if cursorDirection == "left" then
+				self.front = self.front:sub(1, #self.front - 1)
+				self.back = last .. self.back
+			else
+				self.front = self.front .. self.back:sub(1,1)
+				self.back = self.back:sub(2)
+			end
+		else
+			self.front = self.front:sub(1, #self.front -1)
+		end
+	elseif bFirst and bFirst > 127 and bFirst < 194 then
+		self.back = self.back:sub(2)
+	end
 
 	-- is the new text not too long?
 	local success = self:setText( self.front .. self.back )

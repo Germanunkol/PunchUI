@@ -1,4 +1,4 @@
-ui = require("PunchUI")
+ui = require(".")
 
 function love.load()
 

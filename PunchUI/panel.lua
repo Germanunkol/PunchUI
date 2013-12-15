@@ -84,7 +84,6 @@ function Panel:addText( name, x, y, width, height, txt )
 	end
 	-- if the width is not given, make sure text does not
 	-- move outside of panel:
-	print( name, x, y, width, height, txt )
 	x = x + self.padding
 	y = y + self.padding
 	local maxWidth = self.w - x - self.padding

@@ -23,7 +23,6 @@ function InputBlock:keypressed( key )
 	self.oldFront, self.oldBack = self.front, self.back
 	local stop
 
-	print(key)
 
 	if key == "backspace" then
 		local len = #self.front

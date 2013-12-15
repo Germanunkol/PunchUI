@@ -3,6 +3,7 @@ ui = require("PunchUI")
 function love.load()
 
 	love.filesystem.setIdentity("PunchUI")
+	love.graphics.setBackgroundColor(25,25,25,255)
 	
 	scr = ui:newScreen( "main" )
 
@@ -12,7 +13,8 @@ function love.load()
 			200, 220 )
 
 	scr:addHeader( "centerPanel", "welcome", 0, 0, "Welcome" )
-	scr:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}!\n\nTo get started: Open the 'Example' menu by pressing {f}E{w}. Then press {f}1{w} to choose the first option.\n\n\nCheck out the github site for more info:\n{g}https://github.com/Germanunkol/PunchUI" )
+	scr:addText( "centerPanel", "welcometxt", 10, 20, nil, 7, "Welcome to the {f}PunchUI{w}!\n\nTo get started: Open the 'Example' menu by pressing {f}E{w}. Then press {f}1{w} to choose the first option.\n\n\nCheck out the github site for more info: {g}https://github.com/Germanunkol/PunchUI")
+	--scr:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}!\n\nTo get started: Open the 'Example' menu by pressing {f}E{w}. Then press {f}1{w} to choose the first option.\n\n\nCheck out the github site for more info: httpsgithubcom GermanunkolPunchUI")
 
 	ui:setActiveScreen( scr )
 
@@ -39,14 +41,39 @@ function spawnExampleMenu()
 	scr:newMenu( love.graphics.getWidth()/4 + 5, 25, nil, list )
 end
 
+function spawnSubSubMenu( layer )
+	if layer < 7 then
+		return function()
+			local list = {}
+			for k = 1, layer do
+				table.insert( list, { txt = "sub",
+				event = spawnSubSubMenu( layer + 1) } )
+			end
+			table.insert( list, { txt = "menu",
+			event = spawnSubSubMenu( layer + 1) } )
+			table.insert( list, { txt = "(esc to close)",
+			event = spawnSubSubMenu( layer + 1) } )
+			scr:newMenu( 0, 0, nil, list )
+		end
+	else
+	return function()
+			local list = {}
+			table.insert( list, { txt = "close all",
+			event = nil } )
+			table.insert( list, { txt = "(esc to close)",
+			} )
+			scr:newMenu( 0, 0, nil, list )
+		end
+	end
+end
+
 function spawnSubMenu()
 	local list = {
-		{ txt = "This is" },
-		{ txt = "just an" },
-		{ txt = "{g}example sub menu." },
-		{ txt = "It doesn't" },
-		{ txt = "really do" },
-		{ txt = "anything."},
+		{ txt = "This is", event=spawnSubSubMenu(2) },
+		{ txt = "just an", event=spawnSubSubMenu(2) },
+		{ txt = "example sub menu.", event=spawnSubSubMenu(2) },
+		{ txt = "It can do", event=spawnSubSubMenu(2) },
+		{ txt = "{h}col{g}ors, {f}too.", event=spawnSubSubMenu(2) },
 	}
 	scr:newMenu( 0,0, nil, list )
 end
@@ -58,7 +85,7 @@ function spawnInputBox()
 
 	scr:addInput( "centerPanel", "firstInput", 0, 100, nil, 50, "t" )
 	scr:addText( "centerPanel", "explanation", 10, 200, math.huge, 100, "While typing, other functions are disabled. Finish typing by pressing enter (accept) or escape (reset content).") 
-	scr:addFunction( "centerPanel", "close", 0, 340, "Close", "c", function() scr:removePanel( "newPanel" ) end )
+	scr:addFunction( "centerPanel", "close", 0, 340, "Close", "c", function() scr:removePanel( "centerPanel" ) end )
 end
 
 function spawnLoginBox()

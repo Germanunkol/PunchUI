@@ -5,13 +5,16 @@ local class = require(PATH .. "middleclass")
 local Panel = require(PATH .. "panel")
 local Screen = class("PunchUiScreen")
 
-function Screen:initialize( name, font )
+function Screen:initialize( name, font, maxWidth, maxHeight )
 	self.name = name or ""
 	self.font = font
 
 	self.panels = {}
 	self.msgBox = nil
 	self.menus = {}
+
+	self.maxWidth = maxWidth or love.graphics.getWidth()
+	self.maxHeight = maxHeight or love.graphics.getHeight()
 end
 
 function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding, corners )
@@ -73,9 +76,16 @@ function Screen:draw()
 		p:draw( inactive or inactiveMenu )
 	end
 	for k,m in ipairs(self.menus) do
-		m:draw( inactive )
+		if k == #self.menus then
+			m:draw( inactive )
+		else
+			-- always draw lower menus as
+			-- inactive, because the active
+			-- menu is always the top one.
+			m:draw( true )
+		end
 	end
-	
+
 	if self.msgBox then
 		self.msgBox:draw( false )
 	end
@@ -184,6 +194,12 @@ function Screen:newMenu( x, y, minWidth, list )
 				if self.menus[cur - 1] then
 					self.menus[cur].x = self.menus[cur-1].x + self.menus[cur-1].w
 					self.menus[cur].y = self.menus[cur-1].y + (4+self.font:getHeight())*k
+					if self.menus[cur].x + self.menus[cur].w > self.maxWidth then
+						self.menus[cur].x = self.menus[cur-1].x - self.menus[cur].w
+					end
+					if self.menus[cur].y + self.menus[cur].h > self.maxHeight then
+						self.menus[cur].y = self.menus[cur].y - self.menus[cur].h
+					end
 				end
 			end
 		end

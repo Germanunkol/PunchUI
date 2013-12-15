@@ -16,7 +16,7 @@ function love.load()
 
 	ui:setActiveScreen( scr )
 
-	scr:addPanel( "topMenu", 1, 1, love.graphics.getWidth()-1, 25, nil, 5 )
+	scr:addPanel( "topMenu", 1, 1, love.graphics.getWidth()-1, 25, nil, 5, {0,0,0,0} )
 	scr:addFunction( "topMenu", "menu", 0, 0, "Menu", "m", spawnMainMenu )
 	scr:addFunction( "topMenu", "examples", 1*love.graphics.getWidth()/4, 0, "Examples", "e", spawnExampleMenu )
 	scr:addFunction( "topMenu", "license", 2*love.graphics.getWidth()/4, 0, "Show License", "l", spawnLicense )
@@ -34,9 +34,23 @@ function spawnExampleMenu()
 	local list = {
 		{ txt="Input Box", event=spawnInputBox },
 		{ txt="Login", event=spawnLoginBox },
+		{ txt="Sub menu", event=spawnSubMenu },
 	}
 	scr:newMenu( love.graphics.getWidth()/4 + 5, 25, nil, list )
 end
+
+function spawnSubMenu()
+	local list = {
+		{ txt = "This is" },
+		{ txt = "just an" },
+		{ txt = "{g}example sub menu." },
+		{ txt = "It doesn't" },
+		{ txt = "really do" },
+		{ txt = "anything."},
+	}
+	scr:newMenu( 0,0, nil, list )
+end
+
 function spawnInputBox()
 	scr:addPanel( "centerPanel", love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 - 200, 200, 400 )
 	scr:addHeader( "centerPanel", "header", 0, 0, "Text Input Test" )
@@ -57,7 +71,6 @@ function spawnLoginBox()
 end
 
 function spawnLicense()
-
 	scr:addPanel( "centerPanel", love.graphics.getWidth()/2 - 300, love.graphics.getHeight()/2 - 200, 600, 400 )
 	scr:addHeader( "centerPanel", "header", 0, 0, "License:" )
 
@@ -69,7 +82,7 @@ local user, password = "", ""
 
 function checkUser( txt )
 	user = txt
-	if password then
+	if password and #password > 0 then
 		checkPassword( password )
 	end
 end

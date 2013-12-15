@@ -8,7 +8,7 @@ local COLORS = require(PATH .. "colors")
 
 local Panel = class("PunchUiPanel")
 
-function Panel:initialize( name, x, y, w, h, font, padding )
+function Panel:initialize( name, x, y, w, h, font, padding, corners )
 	self.name = name or ""
 	self.x = x or 0
 	self.y = y or 0
@@ -25,6 +25,54 @@ function Panel:initialize( name, x, y, w, h, font, padding )
 	self.lines = {}
 
 	self.activeInput = nil
+	self.corners = corners or {3,3,3,3}	
+	self:calcBorder()
+end
+
+function Panel:calcBorder()
+
+	self.border = {}
+
+	-- top left:
+	if self.corners[1] > 0 then
+		table.insert( self.border, 0 )
+		table.insert( self.border, 0 + self.corners[1] )
+		table.insert( self.border, 0 + self.corners[1] )
+		table.insert( self.border, 0 )
+	else
+		table.insert( self.border, 0 )
+		table.insert( self.border, 0 )
+	end
+	-- top right
+	if self.corners[2] > 0 then
+		table.insert( self.border, self.w - self.corners[2] )
+		table.insert( self.border, 0 )
+		table.insert( self.border, self.w )
+		table.insert( self.border, 0 + self.corners[2] )
+	else
+		table.insert( self.border, self.w )
+		table.insert( self.border, 0 )
+	end
+	-- bottom right
+	if self.corners[3] > 0 then
+		table.insert( self.border, self.w )
+		table.insert( self.border, self.h - self.corners[3] )
+		table.insert( self.border, self.w - self.corners[3] )
+		table.insert( self.border, self.h )
+	else
+		table.insert( self.border, self.w )
+		table.insert( self.border, self.h )
+	end
+	-- bottom left:
+	if self.corners[4] > 0 then
+		table.insert( self.border, self.corners[4] )
+		table.insert( self.border, self.h )
+		table.insert( self.border, 0 )
+		table.insert( self.border, self.h - self.corners[4] )
+	else
+		table.insert( self.border, 0 )
+		table.insert( self.border, self.h )
+	end
 end
 
 function Panel:addText( name, x, y, width, height, txt )
@@ -55,13 +103,13 @@ function Panel:draw( inactive )
 	love.graphics.push()
 	love.graphics.translate( self.x, self.y )
 	love.graphics.setColor( COLORS.PANEL_BG )
-	love.graphics.rectangle( "fill", 0, 0, self.w, self.h )
+	love.graphics.polygon( "fill", self.border )
 	if inactive then
 		love.graphics.setColor( COLORS.BORDER_IN )
-		love.graphics.rectangle( "line", 0, 0, self.w, self.h )
+	love.graphics.polygon( "line", self.border )
 	else
 		love.graphics.setColor( COLORS.BORDER )
-		love.graphics.rectangle( "line", 0, 0, self.w, self.h )
+	love.graphics.polygon( "line", self.border )
 	end
 	for k, l in ipairs( self.lines ) do
 		love.graphics.line( l.x1, l.y1, l.x2, l.y2 )

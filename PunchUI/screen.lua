@@ -14,14 +14,14 @@ function Screen:initialize( name, font )
 	self.menus = {}
 end
 
-function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding )
+function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding, corners )
 
 	-- no duplicate panels allowed!
 	local old = self:panelByName( name )
 	if old then
 		self:removePanel( name )
 	end
-	local pan = Panel:new( name, x, y, minWidth, minHeight, font or self.font, padding )
+	local pan = Panel:new( name, x, y, minWidth, minHeight, font or self.font, padding, corners )
 	table.insert( self.panels, pan )
 	return pan
 end
@@ -145,6 +145,7 @@ function Screen:newMsgBox( header, msg, x, y, width, commands )
 	end
 
 	msgBox.h = (#commands+2)*self.font:getHeight() + height + 30
+	msgBox:calcBorder()
 	self.msgBox = msgBox
 end
 
@@ -157,7 +158,7 @@ function Screen:newMenu( x, y, minWidth, list )
 	x = x or 10
 	y = y or 10
 	local ID = #self.menus + 1
-	local menuPanel = Panel:new( "menuPanel" .. ID, x, y, width, 100, self.font, 4 )
+	local menuPanel = Panel:new( "menuPanel" .. ID, x, y, width, 100, self.font, 4, {0,0,3,3} )
 	
 	local curY = 0
 	local ev, w, h
@@ -202,6 +203,7 @@ function Screen:newMenu( x, y, minWidth, list )
 	
 	menuPanel.h = curY
 	menuPanel.w = 8 + maxWidth
+	menuPanel:calcBorder()
 	self.menus[ID] = menuPanel
 end
 

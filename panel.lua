@@ -4,7 +4,9 @@ local class = require( PATH .. "middleclass" )
 
 local TextBlock = require( PATH .. "textBlock" )
 local InputBlock = require( PATH .. "inputBlock" )
-local COLORS = require(PATH .. "colors")
+local col = require(PATH .. "colors")
+local COLORS, COLORS_INACTIVE = col[1], col[2]
+print(COLORS, COLORS_INACTIVE )
 
 local Panel = class("PunchUiPanel")
 
@@ -99,25 +101,25 @@ function Panel:addHeader( name, x, y, txt )
 end
 
 function Panel:draw( inactive )
+	local COLORS = COLORS
+	if inactive then
+		COLORS = COLORS_INACTIVE
+	end
+
 	love.graphics.push()
 	love.graphics.translate( self.x, self.y )
 	love.graphics.setColor( COLORS.PANEL_BG )
 	love.graphics.polygon( "fill", self.border )
-	if inactive then
-		love.graphics.setColor( COLORS.BORDER_IN )
+	love.graphics.setColor( COLORS.BORDER )
 	love.graphics.polygon( "line", self.border )
-	else
-		love.graphics.setColor( COLORS.BORDER )
-	love.graphics.polygon( "line", self.border )
-	end
 	for k, l in ipairs( self.lines ) do
 		love.graphics.line( l.x1, l.y1, l.x2, l.y2 )
 	end
 	for k, v in ipairs( self.texts ) do
-		v:draw()
+		v:draw( inactive )
 	end
 	for k, v in ipairs( self.inputs ) do
-		v:draw()
+		v:draw( inactive )
 	end
 	love.graphics.pop()
 end

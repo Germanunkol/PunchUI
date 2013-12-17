@@ -5,7 +5,9 @@
 
 local PATH = (...):match("(.-)[^%.]+$")
 local class = require( PATH .. "middleclass" )
-local COLORS = require(PATH .. "colors")
+local col = require(PATH .. "colors")
+local COLORS, COLORS_INACTIVE = col[1], col[2]
+col = nil
 local TextBlock = class("TextBlock")
 
 function TextBlock:initialize( name, x, y, width, height, text, font, renderImg )
@@ -225,17 +227,24 @@ function TextBlock:render()
 	end
 end
 
-function TextBlock:draw()
+function TextBlock:draw( inactive )
 	love.graphics.setColor( 255, 255, 255, 255 )
 	love.graphics.push()
 	love.graphics.translate( self.x, self.y )
+	local COLORS = COLORS
+	if inactive then
+		COLORS = COLORS_INACTIVE
+	end
 	if self.canvas then
+
+		love.graphics.setColor( COLORS.RENDERED_TEXT )
 		local prevMode = love.graphics.getBlendMode()
 		love.graphics.setBlendMode("premultiplied")
 
 		love.graphics.draw( self.canvas, 0, 0)
 
 		love.graphics.setBlendMode( prevMode )
+		love.graphics.setColor(255,255,255,255)
 	else
 		for k, f in ipairs(self.fragments) do
 			love.graphics.setColor( f.color )

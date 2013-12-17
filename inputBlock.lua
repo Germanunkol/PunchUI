@@ -2,7 +2,9 @@
 local PATH = (...):match("(.-)[^%.]+$")
 local class = require( PATH .. "middleclass" )
 local TextBlock = require( PATH .. "textBlock" )
-local COLORS = require(PATH .. "colors")
+local col = require(PATH .. "colors")
+local COLORS, COLORS_INACTIVE = col[1], col[2]
+col = nil
 
 local InputBlock = TextBlock:subclass("InputBlock")
 

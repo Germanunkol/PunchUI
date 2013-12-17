@@ -49,6 +49,9 @@ function UI:textinput( letter, repeated )
 end
 
 function UI:update( dt )
+	if self.actScreen then
+		self.actScreen:update( dt )
+	end
 end
 
 function UI:draw()

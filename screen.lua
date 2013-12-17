@@ -5,6 +5,8 @@ local class = require(PATH .. "middleclass")
 local Panel = require(PATH .. "panel")
 local Screen = class("PunchUiScreen")
 
+local TOOL_TIP_TIME = 6
+
 function Screen:initialize( name, font, maxWidth, maxHeight )
 	self.name = name or ""
 	self.font = font
@@ -13,8 +15,28 @@ function Screen:initialize( name, font, maxWidth, maxHeight )
 	self.msgBox = nil
 	self.menus = {}
 
+	self.tooltipPan = nil
+	self.tooltipTime = 0
+
 	self.maxWidth = maxWidth or love.graphics.getWidth()
 	self.maxHeight = maxHeight or love.graphics.getHeight()
+end
+
+function Screen:enableToolTips()
+	local width, height = love.graphics.getWidth(), self.font:getHeight()*2
+	local x, y = 0, love.graphics.getHeight() - height
+	local pan = Panel:new( "tooltip", x, y, width, height, self.font, 10, {3,3,0,0} )
+	self.tooltipPan = pan
+end
+function Screen:disableToolTips()
+	self.tooltipPan = nil
+end
+
+function Screen:newTooltip( msg )
+	if self.tooltipPan then
+		self.tooltipPan:addText( "tooltip", 0,0, nil, self.font:getHeight()*3, msg )
+		self.tooltipTime = TOOL_TIP_TIME
+	end
 end
 
 function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding, corners )
@@ -27,6 +49,7 @@ function Screen:addPanel( name, x, y, minWidth, minHeight, font, padding, corner
 	local pan = Panel:new( name, x, y, minWidth, minHeight, font or self.font, padding, corners )
 	table.insert( self.panels, pan )
 	return pan
+
 end
 
 function Screen:removePanel( name )
@@ -61,7 +84,6 @@ function Screen:addText( panelName, name, x, y, width, height, txt )
 	t = p:addText( name, x, y, width, height, txt )
 	return t 
 end
-
 function Screen:addHeader( panelName, name, x, y, txt )
 	local p = self:panelByName( panelName )
 	h = p:addHeader( name, x, y, txt )
@@ -71,6 +93,9 @@ end
 function Screen:draw()
 	local inactive = self.msgBox and true or false
 	local inactiveMenu = #self.menus > 0
+	if self.tooltipPan and self.tooltipTime > 0 then
+		self.tooltipPan:draw()
+	end
 
 	for k,p in ipairs(self.panels) do
 		p:draw( inactive or inactiveMenu )
@@ -91,9 +116,16 @@ function Screen:draw()
 	end
 end
 
-function Screen:addFunction( panelName, name, x, y, txt, key, event )
+function Screen:addFunction( panelName, name, x, y, txt, key, event, tooltip )
+	local tooltipEv
+	if tooltip then
+		tooltipEv = function()
+			self:newTooltip( tooltip )
+		end
+	end
+
 	local p = self:panelByName( panelName )
-	f = p:addFunction( name, x, y, txt, key, event )
+	f = p:addFunction( name, x, y, txt, key, event, tooltipEv )
 	return f
 end
 
@@ -129,6 +161,10 @@ function Screen:textinput( letter )
 			return
 		end
 	end
+end
+
+function Screen:update( dt )
+	self.tooltipTime = self.tooltipTime - dt
 end
 
 function Screen:newMsgBox( header, msg, x, y, width, commands )
@@ -203,8 +239,12 @@ function Screen:newMenu( x, y, minWidth, list )
 				end
 			end
 		end
+		local tip = v.tooltip or "Choose option " .. k .. "."
+		local tooltipEv = function()
+			self:newTooltip( tip )
+		end
 
-		ev, w, h = menuPanel:addFunction( tostring(k), 0, curY, v.txt, tostring(k), ev )
+		ev, w, h = menuPanel:addFunction( tostring(k), 0, curY, v.txt, tostring(k), ev, tooltipEv )
 		maxWidth = math.max( maxWidth, w )
 		curY = curY + self.font:getHeight() + 8
 	end

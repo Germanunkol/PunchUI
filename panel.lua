@@ -122,7 +122,7 @@ function Panel:draw( inactive )
 	love.graphics.pop()
 end
 
-function Panel:addFunction( name, x, y, txt, key, event )
+function Panel:addFunction( name, x, y, txt, key, event, tooltip )
 	local fullTxt = COLORS.FUNCTION.ID .. string.upper(key) .. " "
 	fullTxt = fullTxt .. COLORS.PLAIN_TEXT.ID .. txt
 	local t, w, h = self:addText( name, x, y, math.huge, 1, fullTxt )
@@ -130,6 +130,7 @@ function Panel:addFunction( name, x, y, txt, key, event )
 		name = name,
 		key = key,
 		event = event,
+		tooltip = tooltip,
 	}
 	table.insert( self.events, newEvent )
 	return newEvent, w, h
@@ -150,6 +151,7 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password )
 	local keyWidth = self.font:getWidth( key .. " " )
 	
 	width = math.min( width or math.huge, maxWidth )
+	height = height or self.font:getHeight()
 
 	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password )
 
@@ -170,7 +172,11 @@ function Panel:keypressed( key, unicode )
 	if not self.activeInput then
 		for k, f in pairs( self.events ) do
 			if f.key == key then
-				if f.event then
+				if love.keyboard.isDown("lshift") then
+					if f.tooltip then
+						f.tooltip()
+					end
+				elseif f.event then
 					f.event()
 				end
 				return true

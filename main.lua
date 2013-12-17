@@ -13,15 +13,15 @@ function love.load()
 			200, 220 )
 
 	scr:addHeader( "centerPanel", "welcome", 0, 0, "Welcome" )
+	scr:enableToolTips()
 	scr:addText( "centerPanel", "welcometxt", 10, 20, nil, 7, "Welcome to the {f}PunchUI{w}!\n\nTo get started: Open the 'Example' menu by pressing {f}E{w}. Then press {f}1{w} to choose the first option.\n\n\nCheck out the github site for more info: {g}https://github.com/Germanunkol/PunchUI")
-	--scr:addText( "centerPanel", "welcometxt", 10, 20, nil, 4, "Welcome to the {f}PunchUI{w}!\n\nTo get started: Open the 'Example' menu by pressing {f}E{w}. Then press {f}1{w} to choose the first option.\n\n\nCheck out the github site for more info: httpsgithubcom GermanunkolPunchUI")
 
 	ui:setActiveScreen( scr )
 
 	scr:addPanel( "topMenu", 1, 1, love.graphics.getWidth()-1, 25, nil, 5, {0,0,0,0} )
 	scr:addFunction( "topMenu", "menu", 0, 0, "Menu", "m", spawnMainMenu )
-	scr:addFunction( "topMenu", "examples", 1*love.graphics.getWidth()/4, 0, "Examples", "e", spawnExampleMenu )
-	scr:addFunction( "topMenu", "license", 2*love.graphics.getWidth()/4, 0, "Show License", "l", spawnLicense )
+	scr:addFunction( "topMenu", "examples", 1*love.graphics.getWidth()/4, 0, "Examples", "e", spawnExampleMenu, "Show multiple small examples." )
+	scr:addFunction( "topMenu", "license", 2*love.graphics.getWidth()/4, 0, "Show License", "l", spawnLicense, "Display the license." )
 end
 
 function spawnMainMenu()
@@ -131,7 +131,7 @@ function quit()
 end
 
 function love.update( dt )
---	ui:update( dt )
+	ui:update( dt )
 end
 
 function love.draw()

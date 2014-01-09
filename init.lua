@@ -35,6 +35,9 @@ function UI:setActiveScreen( scr )
 		self.actScreen = scr
 	end
 end
+function UI:getActiveScreen()
+	return self.actScreen
+end
 
 function UI:keypressed( key, unicode )
 	if self.actScreen then

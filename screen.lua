@@ -183,6 +183,10 @@ function Screen:update( dt )
 	for k, p in pairs(self.panels) do
 		p:update( dt )
 	end
+	for k, m in pairs(self.menus) do
+		m:update( dt )
+	end
+	if self.msgBox then self.msgBox:update(dt) end
 end
 
 function Screen:newMsgBox( header, msg, x, y, width, commands )

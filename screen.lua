@@ -90,6 +90,21 @@ function Screen:addHeader( panelName, name, x, y, txt )
 	return h
 end
 
+function Screen:activateInput( panelName, name )
+	local p = self:panelByName( panelName )
+	local inp = p:inputByName( name )
+
+	if p.activeInput then p.activeInput:setActive( false ) end
+
+	p.activeInput = inp
+	inp:setActive( true )
+	
+end
+
+function Screen:tabToNextInput()
+	
+end
+
 function Screen:draw()
 	local inactive = self.msgBox and true or false
 	local inactiveMenu = #self.menus > 0

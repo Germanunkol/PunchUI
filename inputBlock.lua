@@ -23,7 +23,7 @@ end
 function InputBlock:keypressed( key )
 	-- back up text incase anything goes wrong:
 	self.oldFront, self.oldBack = self.front, self.back
-	local stop
+	local stop, jump
 
 
 	if key == "backspace" then
@@ -72,10 +72,20 @@ function InputBlock:keypressed( key )
 		self.front = self.front .. self.back
 		self.back = ""
 		self.cursorX, self.cursorY = self:getCharPos( #self.front )
+	elseif key == "tab" then
+		self.fullContent = self.front .. self.back
+		self:update()
+		if love.keyboard.isDown("lshift", "rshift") then
+			jump = "backward"
+		else
+			jump = "forward"
+		end
 	end
 
 	if stop then
 		return "stop"
+	elseif jump then
+		return jump
 	end
 end
 

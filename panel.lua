@@ -190,7 +190,40 @@ function Panel:keypressed( key, unicode )
 		if re == "stop" then
 			self.activeInput:setActive(false)
 			self.activeInput = nil
+		elseif re == "forward" then		-- tab pressed: go to next input
+			self.activeInput:setActive(false)
+			local current = self.activeInput
+			self.activeInput = nil
+			local found = false
+			for k, inp in ipairs(self.inputs) do
+				if found then
+					self.activeInput = inp
+					self.activeInput:setActive(true)
+					break
+				end
+				if inp == current then
+					found = true
+				end
+			end
+			elseif re == "backward" then		-- tab pressed: go to next input
+			self.activeInput:setActive(false)
+			local current = self.activeInput
+			self.activeInput = nil
+			local found = false
+			local inp
+			for k = #self.inputs, 1, -1 do
+				inp = self.inputs[k]
+				if found then
+					self.activeInput = inp
+					self.activeInput:setActive(true)
+					break
+				end
+				if inp == current then
+					found = true
+				end
+			end
 		end
+	
 	end
 end
 

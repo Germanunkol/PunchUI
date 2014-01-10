@@ -1,3 +1,5 @@
+local START_X, START_Y, START_ALPHA = 0, 30, 0
+local START_TIME = 0.8
 
 local PATH = (...):match("(.-)[^%.]+$")
 local class = require( PATH .. "middleclass" )
@@ -29,6 +31,12 @@ function Panel:initialize( name, x, y, w, h, font, padding, corners )
 	self.activeInput = nil
 	self.corners = corners or {3,3,3,3}	
 	self:calcBorder()
+
+	self.startX = START_X
+	self.startY = START_Y
+	self.alpha = START_ALPHA
+	self.startTime = START_TIME
+	self.animationTime = self.startTime
 end
 
 function Panel:calcBorder()
@@ -100,17 +108,29 @@ function Panel:addHeader( name, x, y, txt )
 	return self:addText( name, x, y, math.huge, 1, COLORS.HEADER.ID ..txt )
 end
 
+function Panel:update( dt )
+	if self.startTime > 0 then
+		self.startTime = self.startTime - dt
+		-- let amount go towards zero:
+		local linear = math.max(self.startTime/self.animationTime, 0)
+		local amount = math.pow( linear, 6)
+		self.startX = START_X*amount
+		self.startY = START_Y*amount
+		self.alpha = (1 - linear)
+	end
+end
+
 function Panel:draw( inactive )
-	local COLORS = COLORS
+	local COL = COLORS
 	if inactive then
-		COLORS = COLORS_INACTIVE
+		COL = COLORS_INACTIVE
 	end
 
 	love.graphics.push()
-	love.graphics.translate( self.x, self.y )
-	love.graphics.setColor( COLORS.PANEL_BG )
+	love.graphics.translate( self.x + self.startX, self.y + self.startY )
+	love.graphics.setColor( COL.PANEL_BG[1], COL.PANEL_BG[2], COL.PANEL_BG[3], COL.PANEL_BG[4]*self.alpha )
 	love.graphics.polygon( "fill", self.border )
-	love.graphics.setColor( COLORS.BORDER )
+	love.graphics.setColor( COL.BORDER[1], COL.BORDER[2], COL.BORDER[3], COL.BORDER[4]*self.alpha )
 	love.graphics.polygon( "line", self.border )
 	for k, l in ipairs( self.lines ) do
 		love.graphics.line( l.x1, l.y1, l.x2, l.y2 )

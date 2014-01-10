@@ -180,6 +180,9 @@ end
 
 function Screen:update( dt )
 	self.tooltipTime = self.tooltipTime - dt
+	for k, p in pairs(self.panels) do
+		p:update( dt )
+	end
 end
 
 function Screen:newMsgBox( header, msg, x, y, width, commands )

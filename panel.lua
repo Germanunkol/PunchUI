@@ -1,5 +1,5 @@
 local START_X, START_Y, START_ALPHA = 0, 30, 0
-local START_TIME = 0.8
+local START_TIME = 0.4
 
 local PATH = (...):match("(.-)[^%.]+$")
 local class = require( PATH .. "middleclass" )
@@ -35,8 +35,8 @@ function Panel:initialize( name, x, y, w, h, font, padding, corners )
 	self.startX = START_X
 	self.startY = START_Y
 	self.alpha = START_ALPHA
-	self.startTime = START_TIME
-	self.animationTime = self.startTime
+	self.startTime = 0
+	self.animationTime = START_TIME
 end
 
 function Panel:calcBorder()
@@ -109,14 +109,21 @@ function Panel:addHeader( name, x, y, txt )
 end
 
 function Panel:update( dt )
-	if self.startTime > 0 then
-		self.startTime = self.startTime - dt
+	if self.startTime < self.animationTime then
+		self.startTime = self.startTime + dt
 		-- let amount go towards zero:
-		local linear = math.max(self.startTime/self.animationTime, 0)
-		local amount = math.pow( linear, 6)
-		self.startX = START_X*amount
-		self.startY = START_Y*amount
-		self.alpha = (1 - linear)
+		local t = math.max(self.startTime/self.animationTime, 0)
+		--local amount = math.pow( linear, 6)
+		local amount = -2.5*t^2+3.5*t
+		self.startX = START_X*(1-amount)
+		self.startY = START_Y*(1-amount)
+		self.alpha = t
+		if self.startTime >= self.animationTime then
+			self.startX = 0
+			self.startY = 0
+			self.alpha = 1
+		end
+		print(self.alpha)
 	end
 end
 

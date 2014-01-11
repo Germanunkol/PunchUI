@@ -8,7 +8,6 @@ local TextBlock = require( PATH .. "textBlock" )
 local InputBlock = require( PATH .. "inputBlock" )
 local col = require(PATH .. "colors")
 local COLORS, COLORS_INACTIVE = col[1], col[2]
-print(COLORS, COLORS_INACTIVE )
 
 local Panel = class("PunchUiPanel")
 
@@ -123,7 +122,6 @@ function Panel:update( dt )
 			self.startY = 0
 			self.alpha = 1
 		end
-		print(self.alpha)
 	end
 end
 

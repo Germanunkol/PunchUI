@@ -1,5 +1,5 @@
 local START_X, START_Y, START_ALPHA = 0, 30, 0
-local START_TIME = 0.4
+local START_TIME = 0.3
 
 local PATH = (...):match("(.-)[^%.]+$")
 local class = require( PATH .. "middleclass" )

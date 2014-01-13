@@ -41,13 +41,13 @@ end
 
 function UI:keypressed( key, unicode )
 	if self.actScreen then
-		self.actScreen:keypressed( key, unicode )
+		return self.actScreen:keypressed( key, unicode )
 	end
 end
 
 function UI:textinput( letter, repeated )
 	if self.actScreen then
-		self.actScreen:textinput( letter )
+		return self.actScreen:textinput( letter )
 	end
 end
 

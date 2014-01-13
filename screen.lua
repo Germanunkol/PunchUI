@@ -146,25 +146,26 @@ end
 
 function Screen:keypressed( key, unicode )
 	if self.msgBox then
-		self.msgBox:keypressed( key, unicode )
+		return self.msgBox:keypressed( key, unicode )
 	elseif #self.menus > 0 then
 		if key == "escape" then
 			self.menus[#self.menus] = nil
+			return true
 		else
-			self.menus[#self.menus]:keypressed( key, unicode )
+			return self.menus[#self.menus]:keypressed( key, unicode )
 		end
 	else
 		for k, p in pairs( self.panels ) do
 			if p.activeInput then
 				p:keypressed( key, unicode )
-				return
+				return true
 			end
 		end
 
 		for k, p in pairs( self.panels ) do
 			-- allow only one panel to react to the input:
 			if p:keypressed( key, unicode ) then
-				return
+				return true
 			end
 		end
 	end
@@ -173,7 +174,7 @@ function Screen:textinput( letter )
 	for k, p in pairs( self.panels ) do
 		if p.activeInput then
 			p:textinput( letter )
-			return
+			return true
 		end
 	end
 end

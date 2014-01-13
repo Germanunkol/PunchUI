@@ -106,6 +106,8 @@ function Screen:tabToNextInput()
 end
 
 function Screen:draw()
+	love.graphics.setLineWidth(1)
+
 	local inactive = self.msgBox and true or false
 	local inactiveMenu = #self.menus > 0
 	if self.tooltipPan and self.tooltipTime > 0 then

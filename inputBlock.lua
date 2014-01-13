@@ -80,6 +80,9 @@ function InputBlock:keypressed( key )
 		else
 			jump = "forward"
 		end
+		if self.returnEvent then
+			self.returnEvent( self.fullContent )
+		end
 	end
 
 	if stop then
@@ -101,6 +104,14 @@ function InputBlock:textinput( letter )
 	--local chr = string.char(unicode)
 	self.front = self.front .. letter
 	self:update( "right" )
+end
+
+function InputBlock:setContent( txt )
+	local success = self:setText( txt )
+	if success then
+	self.front = txt
+	self.back = ""
+end
 end
 
 function InputBlock:update( cursorDirection )

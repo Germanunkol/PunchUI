@@ -69,9 +69,10 @@ function Screen:panelByName( name )
 	end
 end
 
-function Screen:addInput( panelName, name, x, y, width, height, key, event )
+function Screen:addInput( panelName, name, x, y, width, height, key, event, content )
 	local p = self:panelByName( panelName )
-	i = p:addInput( name, x, y, width, height, key, event )
+	print("c:", content)
+	i = p:addInput( name, x, y, width, height, key, event, false, content)
 	return i
 end
 function Screen:addPassword( panelName, name, x, y, width, height, key, event )

@@ -163,7 +163,7 @@ function Panel:addFunction( name, x, y, txt, key, event, tooltip )
 	return newEvent, w, h
 end
 
-function Panel:addInput( name, x, y, width, height, key, returnEvent, password )
+function Panel:addInput( name, x, y, width, height, key, returnEvent, password, content )
 	-- add a function which will set the new input box to active:
 	-- add the key infront of the input box:
 	local event = function()
@@ -181,6 +181,11 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password )
 	height = height or self.font:getHeight()
 
 	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password )
+
+	print("content:", content)
+	if content and type(content) == "string" then
+		i:setContent( content )
+	end	
 
 	table.insert(self.inputs, i)
 	return i
@@ -230,7 +235,7 @@ function Panel:keypressed( key, unicode )
 					found = true
 				end
 			end
-			elseif re == "backward" then		-- tab pressed: go to next input
+		elseif re == "backward" then		-- tab pressed: go to next input
 			self.activeInput:setActive(false)
 			local current = self.activeInput
 			self.activeInput = nil
@@ -248,7 +253,7 @@ function Panel:keypressed( key, unicode )
 				end
 			end
 		end
-	
+
 	end
 end
 

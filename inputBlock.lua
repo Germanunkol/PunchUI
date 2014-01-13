@@ -8,7 +8,7 @@ col = nil
 
 local InputBlock = TextBlock:subclass("InputBlock")
 
-function InputBlock:initialize( name, x, y, width, height, font, returnEvent, password )
+function InputBlock:initialize( name, x, y, width, height, font, returnEvent, password, maxLetters )
 	TextBlock.initialize( self, name, x, y, width, height, "", font, false )
 	self.fullContent = ""
 	self.front = ""
@@ -16,6 +16,7 @@ function InputBlock:initialize( name, x, y, width, height, font, returnEvent, pa
 	self.cursorX = 0
 	self.cursorY = 0
 	self.password = password or false
+	self.maxLetters = maxLetters or math.huge
 	self.maxLines = math.floor(height/self.font:getHeight())
 	self.returnEvent = returnEvent
 end
@@ -99,11 +100,13 @@ function InputBlock:textinput( letter )
 		self.ignoredFirst = true
 		return
 	end
-	
-	self.oldFront, self.oldBack = self.front, self.back
-	--local chr = string.char(unicode)
-	self.front = self.front .. letter
-	self:update( "right" )
+
+	if #self.front + #self.back < self.maxLetters then
+		self.oldFront, self.oldBack = self.front, self.back
+		--local chr = string.char(unicode)
+		self.front = self.front .. letter
+		self:update( "right" )
+	end
 end
 
 function InputBlock:setContent( txt )

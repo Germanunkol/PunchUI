@@ -163,7 +163,7 @@ function Panel:addFunction( name, x, y, txt, key, event, tooltip )
 	return newEvent, w, h
 end
 
-function Panel:addInput( name, x, y, width, height, key, returnEvent, password, content )
+function Panel:addInput( name, x, y, width, height, key, returnEvent, password, content, maxLetters )
 	-- add a function which will set the new input box to active:
 	-- add the key infront of the input box:
 	local event = function()
@@ -180,12 +180,11 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password, 
 	width = math.min( width or math.huge, maxWidth )
 	height = height or self.font:getHeight()
 
-	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password )
+	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password, maxLetters )
 
-	print("content:", content)
 	if content and type(content) == "string" then
 		i:setContent( content )
-	end	
+	end
 
 	table.insert(self.inputs, i)
 	return i

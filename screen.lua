@@ -149,6 +149,10 @@ function Screen:addFunction( panelName, name, x, y, txt, key, event, tooltip )
 	f = p:addFunction( name, x, y, txt, key, event, tooltipEv )
 	return f
 end
+function Screen:removeFunction( panelName, name )
+	local p = self:panelByName( panelName )
+	p:removeFunction( name )
+end
 
 function Screen:keypressed( key, unicode )
 	if self.msgBox then
@@ -346,9 +350,9 @@ function Screen:newList( x, y, minWidth, list )
 	return listPanel
 end
 
-function Screen:removeList( list )
-	for k, l in pairs( self.lists ) do
-		if l == list then
+function Screen:removeList( name )
+	for k, l in ipairs( self.lists ) do
+		if l.name == name then
 			table.remove( self.lists, k )
 			return
 		end

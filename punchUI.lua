@@ -1,8 +1,10 @@
 --local msgBox = require("Scripts/UI/uiMsgBox")
 --local toolTip = require("Scripts/UI/uiToolTip")
-local class = require("Scripts/middleclass")
+local PATH = (...):match("(.-)[^%.%/]+$")
+
+local class = require(PATH .. "middleclass")
 UI = class("UI")
-local Panel = require("Scripts/UI/panel")
+local Panel = require(PATH .. "panel")
 
 local DEFAULT_FONT = love.graphics.newFont(12)
 local MSG_BOX_WIDTH = 200
@@ -153,7 +155,6 @@ end
 
 -- check to see if an active function has the pressed key. If so, execute the function and return.
 function UI:keypressed( key, unicode )
-	print(key, unicode)
 	if #self.msgBoxList > 0 then
 		for k, p in ipairs(self.msgBoxList) do
 			for k, v in pairs( p.funcList ) do

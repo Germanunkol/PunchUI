@@ -3,6 +3,7 @@ local START_TIME = 0.3
 
 local PATH = (...):match("(.-)[^%.^/]+$")
 local class = require( PATH .. "middleclass" )
+local utility = require( PATH .. "utility" )
 
 local TextBlock = require( PATH .. "textBlock" )
 local InputBlock = require( PATH .. "inputBlock" )
@@ -142,8 +143,16 @@ function Panel:draw( inactive )
 	love.graphics.polygon( "fill", self.border )
 	love.graphics.setColor( COL.BORDER[1], COL.BORDER[2], COL.BORDER[3], COL.BORDER[4]*self.alpha )
 	love.graphics.polygon( "line", self.border )
+	love.graphics.setColor( COL.BORDER[1], COL.BORDER[2], COL.BORDER[3], COL.BORDER[4]*self.alpha*0.5 )
 	for k, l in ipairs( self.lines ) do
 		love.graphics.line( l.x1, l.y1, l.x2, l.y2 )
+	end
+	for k, e in ipairs( self.events ) do
+		if e.highlight then
+			love.graphics.setColor( COL.HLIGHT[1], COL.HLIGHT[2], COL.HLIGHT[3], COL.HLIGHT[4]*self.alpha )
+			love.graphics.rectangle( "fill", e.x, e.y,
+				e.w, e.h )
+		end
 	end
 	for k, v in ipairs( self.texts ) do
 		v:draw( inactive )
@@ -163,6 +172,10 @@ function Panel:addFunction( name, x, y, txt, key, event, tooltip )
 		key = key,
 		event = event,
 		tooltip = tooltip,
+		x = x + self.padding - 1,
+		y = y + self.padding - 1,
+		w = w + 2,
+		h = h + 2,
 	}
 	table.insert( self.events, newEvent )
 	return newEvent, w, h
@@ -224,7 +237,7 @@ function Panel:keypressed( key, unicode )
 						f.tooltip()
 					end
 				elseif f.event then
-					f.event()
+					f.event( f )
 				end
 				return true
 			end
@@ -281,6 +294,60 @@ end
 
 function Panel:addLine( x1, y1, x2, y2 )
 	self.lines[#self.lines+1] = {x1=x1, y1=y1, x2=x2, y2=y2 }
+end
+
+function Panel:addListItem( item )
+
+	if #self.events > 0 then
+		self:addLine( 4, self.h , self.w - 8, self.h )
+	end
+
+	local curY = self.h
+
+	local ev = function()
+		if item.event then
+			item.event()
+		end
+	end
+	local tip = item.tooltip or "Choose option " .. #self.events + 1 .. "."
+	local tooltipEv = function()
+		self:newTooltip( tip )
+	end
+
+
+	local key = item.key or tostring( #self.events + 1 )
+
+	ev, w, h = self:addFunction( key, 5, curY, item.txt, key, ev, tooltipEv )
+	maxWidth = math.max( self.w - 12, w )
+	curY = curY + self.font:getHeight() + 8
+
+	self.h = curY
+	self.w = maxWidth + 12
+
+	self:calcBorder()
+end
+
+------------------------------------------------------
+-- Handle mouse input:
+
+function Panel:mousemoved( x, y )
+	for k, e in pairs( self.events ) do
+		if utility.isInside( x, y, e.x + self.x, e.y + self.y, e.w, e.h ) then
+			e.highlight = true
+			return e
+		end
+	end
+end
+
+function Panel:mousepressed( x, y, button )
+	for k, e in pairs( self.events ) do
+		if utility.isInside( x, y, e.x + self.x, e.y + self.y, e.w, e.h ) then
+			if e.event then
+				e.event( e )
+			end
+			return e
+		end
+	end
 end
 
 return Panel

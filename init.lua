@@ -20,6 +20,18 @@ function UI:newScreen( name, font )
 	return scr
 end
 
+function UI:removeScreen( name )
+	for k, s in ipairs( self.screens ) do
+		if s.name == name then
+			if self.actScreen == s then
+				self.actScreen = nil
+			end
+			table.remove( self.screens, k )
+			return
+		end
+	end
+end
+
 function UI:screenByName( name )
 	for k, s in pairs( self.screens ) do
 		if name == s.name then
@@ -60,6 +72,17 @@ end
 function UI:draw()
 	if self.actScreen then
 		self.actScreen:draw()
+	end
+end
+
+function UI:mousepressed( x, y, button )
+	if self.actScreen then
+		return self.actScreen:mousepressed( x, y, button )
+	end
+end
+function UI:mousemoved( x, y )
+	if self.actScreen then
+		self.actScreen:mousemoved( x, y )
 	end
 end
 

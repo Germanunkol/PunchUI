@@ -223,12 +223,18 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password, 
 	return i
 end
 
-
 function Panel:inputByName( name )
 	for k, i in ipairs( self.inputs ) do
 		if i.name == name then
 			return i
 		end
+	end
+end
+
+function Panel:disableInput()
+	if self.activeInput then
+		self.activeInput:setActive(false)
+		self.activeInput = nil
 	end
 end
 
@@ -250,8 +256,9 @@ function Panel:keypressed( key, unicode )
 		local re = self.activeInput:keypressed( key, unicode )
 		-- if "esc" was pressed (or similar), stop:
 		if re == "stop" then
-			self.activeInput:setActive(false)
-			self.activeInput = nil
+			--self.activeInput:setActive(false)
+			--self.activeInput = nil
+			self:disableInput()
 		elseif re == "forward" then		-- tab pressed: go to next input
 			self.activeInput:setActive(false)
 			local current = self.activeInput

@@ -201,7 +201,7 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password, 
 		self.activeInput = self:inputByName( name )
 		self.activeInput:setActive( true )
 	end
-	self:addFunction( name, x, y, "", key, event )
+	local ev = self:addFunction( name, x, y, "", key, event )
 
 	x = x + self.padding
 	y = y + self.padding
@@ -210,6 +210,8 @@ function Panel:addInput( name, x, y, width, height, key, returnEvent, password, 
 	
 	width = math.min( width or math.huge, maxWidth )
 	height = height or self.font:getHeight()
+
+	ev.w = width
 
 	local i = InputBlock:new( name, x + keyWidth, y, width-keyWidth, height, self.font, returnEvent, password, maxLetters )
 
@@ -319,7 +321,7 @@ function Panel:putListItem( item, i, curY )
 
 	ev, w, h = self:addFunction( key, 5, curY, item.txt, key, ev, tooltipEv )
 	curY = curY + self.list.lineHeight
-	return curY, w
+	return curY, w, ev
 end
 
 

@@ -239,7 +239,7 @@ function TextBlock:draw( inactive )
 
 		love.graphics.setColor( COLORS.RENDERED_TEXT )
 		local prevMode = love.graphics.getBlendMode()
-		love.graphics.setBlendMode("premultiplied")
+		--love.graphics.setBlendMode("premultiplied")
 
 		love.graphics.draw( self.canvas, 0, 0)
 
